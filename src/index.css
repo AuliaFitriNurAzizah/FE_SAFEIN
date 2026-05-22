@@ -1,0 +1,18 @@
+:root {
+  --safein-navy: #112d4e;     /* Biru Navy dari Header kamu */
+  --safein-slate: #7a8ea2;    /* Biru Abu-abu dari Card kamu */
+  --safein-light: #f9f7f7;    /* Warna background terang */
+}
+
+.bg-safein-navy { background-color: var(--safein-navy) !important; }
+.bg-safein-slate { background-color: var(--safein-slate) !important; }
+.text-safein-navy { color: var(--safein-navy) !important; }
+.btn-safein {
+  background-color: var(--safein-navy);
+  color: white;
+  border: none;
+}
+.btn-safein:hover {
+  background-color: #0d233c;
+  color: white;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // Import Axios
+import { showAlert } from "../utils/swal";
 
 function Register() {
   const [nama, setNama] = useState("");
@@ -30,7 +31,7 @@ function Register() {
       );
 
       console.log("Response Backend:", response.data);
-      alert("Pendaftaran berhasil! Silakan login.");
+      await showAlert("Berhasil!", "success", "Pendaftaran berhasil! Silakan login.");
 
       // Setelah berhasil, arahkan user ke halaman login
       navigate("/login");

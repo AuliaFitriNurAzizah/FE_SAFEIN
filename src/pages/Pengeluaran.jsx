@@ -10,6 +10,7 @@ import {
   BsSearch, 
   BsDownload 
 } from 'react-icons/bs';
+import { showAlert, showConfirm, showToast } from '../utils/swal';
 
 const Pengeluaran = () => {
   const [expenses, setExpenses] = useState([]);
@@ -54,7 +55,7 @@ const Pengeluaran = () => {
 
     } catch (err) {
       console.error("Gagal mengambil data:", err);
-      alert("Gagal mengambil data dari server.");
+      showAlert("Gagal!", "error", "Gagal mengambil data dari server.");
     } finally {
       setLoading(false);
     }
@@ -83,9 +84,10 @@ const Pengeluaran = () => {
       
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
+      showToast("File CSV berhasil diunduh");
     } catch (err) {
       console.error("Gagal export:", err);
-      alert("Gagal mengunduh file CSV.");
+      showAlert("Gagal!", "error", "Gagal mengunduh file CSV.");
     } finally {
       setLoading(false);
     }
@@ -127,23 +129,27 @@ const Pengeluaran = () => {
     try {
       if (isEditMode) {
         await api.put(`/transactions/${currentId}`, payload);
+        showToast("Pengeluaran berhasil diperbarui");
       } else {
         await api.post('/transactions', payload);
+        showToast("Pengeluaran berhasil ditambahkan");
       }
       setShowModal(false);
       fetchData();
     } catch (err) {
-      alert("Gagal memproses transaksi: " + (err.response?.data?.message || err.message));
+      showAlert("Gagal!", "error", "Gagal memproses transaksi: " + (err.response?.data?.message || err.message));
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Hapus catatan pengeluaran ini?")) {
+    const result = await showConfirm("Hapus Pengeluaran?", "Apakah Anda yakin ingin menghapus catatan pengeluaran ini?");
+    if (result.isConfirmed) {
       try {
         await api.delete(`/transactions/${id}`);
+        showToast("Transaksi berhasil dihapus");
         fetchData();
       } catch (err) {
-        alert("Gagal menghapus.");
+        showAlert("Gagal!", "error", "Gagal menghapus.");
       }
     }
   };
@@ -213,7 +219,7 @@ const Pengeluaran = () => {
               onClick={handleExport}
               disabled={expenses.length === 0}
             >
-              <BsDownload /> Export CSV
+              <BsDownload /> Export
             </button>
           </div>
 

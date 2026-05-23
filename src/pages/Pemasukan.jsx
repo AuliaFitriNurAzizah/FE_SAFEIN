@@ -10,6 +10,7 @@ import {
   BsDownload,
 } from "react-icons/bs";
 import { FaMoneyBillWave } from "react-icons/fa";
+import { showAlert, showConfirm, showToast } from "../utils/swal";
 
 const Pemasukan = () => {
   const [user, setUser] = useState({ name: "" });
@@ -67,7 +68,7 @@ const Pemasukan = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.category_id) return alert("Pilih kategori terlebih dahulu");
+    if (!formData.category_id) return showAlert("Peringatan", "warning", "Pilih kategori terlebih dahulu");
 
     try {
       setLoading(true);
@@ -75,26 +76,30 @@ const Pemasukan = () => {
 
       if (currentId) {
         await api.put(`/transactions/${currentId}`, payload);
+        showToast("Pemasukan berhasil diperbarui");
       } else {
         await api.post("/transactions", payload);
+        showToast("Pemasukan berhasil ditambahkan");
       }
 
       closeModal();
       fetchData(); 
     } catch (err) {
-      alert("Gagal menyimpan: " + (err.response?.data?.message || "Terjadi kesalahan"));
+      showAlert("Gagal!", "error", "Gagal menyimpan: " + (err.response?.data?.message || "Terjadi kesalahan"));
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Hapus transaksi ini?")) {
+    const result = await showConfirm("Hapus Pemasukan?", "Apakah Anda yakin ingin menghapus transaksi ini?");
+    if (result.isConfirmed) {
       try {
         await api.delete(`/transactions/${id}`);
+        showToast("Transaksi berhasil dihapus");
         fetchData();
       } catch (err) {
-        alert("Gagal menghapus data");
+        showAlert("Gagal!", "error", "Gagal menghapus data");
       }
     }
   };
@@ -115,8 +120,9 @@ const Pemasukan = () => {
       link.click();
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
+      showToast("File CSV berhasil diunduh");
     } catch (err) {
-      alert("Gagal mengekspor data ke file CSV");
+      showAlert("Gagal!", "error", "Gagal mengekspor data ke file CSV");
     } finally {
       setLoading(false);
     }
@@ -195,7 +201,7 @@ const Pemasukan = () => {
               <BsPlusLg /> Tambah Baru
             </button>
             <button className="btn btn-outline-success d-flex align-items-center gap-2 px-4 fw-bold shadow-sm" onClick={handleExport} disabled={loading || transactions.length === 0}>
-              <BsDownload /> Export CSV
+              <BsDownload /> Export 
             </button>
           </div>
 

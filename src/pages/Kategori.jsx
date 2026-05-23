@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../utils/api";
 import MainLayout from "../components/MainLayout";
 import { BsTags, BsPlusLg, BsPencilSquare, BsTrash } from "react-icons/bs";
+import { showAlert, showConfirm, showToast } from "../utils/swal";
 
 const Kategori = () => {
   const [categories, setCategories] = useState([]);
@@ -55,23 +56,27 @@ const Kategori = () => {
     try {
       if (isEditMode) {
         await api.put(`/categories/${currentId}`, formData);
+        showToast("Kategori berhasil diperbarui");
       } else {
         await api.post("/categories", formData);
+        showToast("Kategori berhasil ditambahkan");
       }
       setShowModal(false);
       fetchData();
     } catch (err) {
-      alert("Gagal menyimpan data: " + err.message);
+      showAlert("Gagal!", "error", "Gagal menyimpan data: " + err.message);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus kategori ini?")) {
+    const result = await showConfirm("Hapus Kategori?", "Apakah Anda yakin ingin menghapus kategori ini?");
+    if (result.isConfirmed) {
       try {
         await api.delete(`/categories/${id}`);
+        showToast("Kategori berhasil dihapus");
         fetchData();
       } catch (err) {
-        alert("Gagal menghapus data.");
+        showAlert("Gagal!", "error", "Gagal menghapus data.");
       }
     }
   };

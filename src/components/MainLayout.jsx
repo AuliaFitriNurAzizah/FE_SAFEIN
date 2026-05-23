@@ -4,6 +4,7 @@ import api from '../utils/api';
 import { MdDashboard, MdLogout, MdMenu, MdClose } from 'react-icons/md';
 import { FaChartLine } from 'react-icons/fa';
 import { BsGraphUpArrow, BsFillBagCheckFill, BsTags } from 'react-icons/bs';
+import { showConfirm } from '../utils/swal';
 
 const MainLayout = ({ children, user }) => {
   const navigate = useNavigate();
@@ -11,7 +12,8 @@ const MainLayout = ({ children, user }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
-    if (window.confirm("Yakin ingin logout?")) {
+    const result = await showConfirm("Konfirmasi Logout", "Yakin ingin logout?");
+    if (result.isConfirmed) {
       try {
         await api.delete('/authentications');
         localStorage.removeItem('accessToken');

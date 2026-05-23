@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Tambahkan useNavigate
 import axios from "axios"; // Import Axios
+import { showToast } from "../utils/swal";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ function Login() {
         // Debug untuk memastikan token benar-benar tersimpan sebagai string
         console.log("Token disimpan:", localStorage.getItem("authToken"));
 
-        alert("Login Berhasil!");
+        showToast("Login Berhasil!");
         navigate("/dashboard");
       }
     } catch (err) {

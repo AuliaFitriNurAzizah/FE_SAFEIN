@@ -16,15 +16,15 @@ function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <header className="container d-flex align-items-center justify-content-center text-center" style={{ minHeight: "100vh", paddingTop: "80px" }}>
-        <div style={{ maxWidth: "700px" }}>
-          <h1 className="display-4 fw-bold text-safein-navy mb-4">
+      <header className="container d-flex align-items-center justify-content-center text-center px-4" style={{ minHeight: "100vh", paddingTop: "80px" }}>
+        <div style={{ maxWidth: "800px" }}>
+          <h1 className="fw-bold text-safein-navy mb-4" style={{ fontSize: 'calc(1.8rem + 1.5vw)' }}>
             Kelola Keuangan dengan Kecerdasan Buatan
           </h1>
-          <p className="lead text-muted mb-5">
+          <p className="lead text-muted mb-5" style={{ fontSize: 'calc(1rem + 0.2vw)' }}>
             SAFEIN hadir untuk membantu Anda memahami pola pengeluaran, memprediksi risiko, dan mengambil keputusan finansial yang lebih cerdas dan terarah.
           </p>
-          <Link to="/register" className="btn btn-lg btn-safein px-5 py-3 shadow-sm">
+          <Link to="/register" className="btn btn-lg btn-safein px-4 px-md-5 py-3 shadow-sm fw-bold">
             Mulai Sekarang
           </Link>
         </div>
@@ -33,29 +33,29 @@ function LandingPage() {
       {/* Fitur Section */}
       <section className="container py-5">
         <div className="row g-4 text-center">
-          <h2 className="fw-bold text-safein-navy mb-5">Mengapa Memilih SAFEIN?</h2>
+          <h2 className="fw-bold text-safein-navy mb-4 mb-md-5">Mengapa Memilih SAFEIN?</h2>
           
-          <div className="col-md-4">
+          <div className="col-sm-6 col-lg-4">
             <div className="card h-100 border-0 shadow-sm p-4">
               <i className="bi bi-graph-up-arrow fs-1 text-safein-navy mb-3"></i>
               <h5 className="fw-bold">Analisis Akurat</h5>
-              <p className="text-muted small">Visualisasi data keuangan yang mudah dipahami untuk memantau pemasukan dan pengeluaran.</p>
+              <p className="text-muted small mb-0">Visualisasi data keuangan yang mudah dipahami untuk memantau pemasukan dan pengeluaran.</p>
             </div>
           </div>
 
-          <div className="col-md-4">
+          <div className="col-sm-6 col-lg-4">
             <div className="card h-100 border-0 shadow-sm p-4">
               <i className="bi bi-robot fs-1 text-safein-navy mb-3"></i>
               <h5 className="fw-bold">Insight AI</h5>
-              <p className="text-muted small">Dapatkan rekomendasi cerdas berbasis AI untuk mengoptimalkan anggaran bulanan Anda.</p>
+              <p className="text-muted small mb-0">Dapatkan rekomendasi cerdas berbasis AI untuk mengoptimalkan anggaran bulanan Anda.</p>
             </div>
           </div>
 
-          <div className="col-md-4">
+          <div className="col-sm-12 col-lg-4">
             <div className="card h-100 border-0 shadow-sm p-4">
               <i className="bi bi-shield-check fs-1 text-safein-navy mb-3"></i>
               <h5 className="fw-bold">Keamanan Terjamin</h5>
-              <p className="text-muted small">Data finansial Anda dikelola dengan sistem keamanan tingkat tinggi untuk ketenangan pikiran.</p>
+              <p className="text-muted small mb-0">Data finansial Anda dikelola dengan sistem keamanan tingkat tinggi untuk ketenangan pikiran.</p>
             </div>
           </div>
         </div>

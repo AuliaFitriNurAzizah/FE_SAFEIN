@@ -58,7 +58,7 @@ function Login() {
   return (
     <div className="container-fluid vh-100 p-0">
       <div className="row g-0 h-100">
-        <div className="col-lg-5 d-flex align-items-center justify-content-center bg-white p-5">
+        <div className="col-lg-5 d-flex align-items-center justify-content-center bg-white p-4 p-md-5">
           <div style={{ maxWidth: "380px", width: "100%" }}>
             <h2 className="fw-bold text-safein-navy mb-1 mt-5">SAFEIN</h2>
             <p className="text-muted small mb-4">

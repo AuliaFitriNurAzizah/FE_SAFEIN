@@ -155,36 +155,36 @@ const Dashboard = () => {
   return (
     <MainLayout user={user}>
       {/* 1. SUMMARY CARDS */}
-      <div className="row g-4 mb-4">
-        <div className="col-md-4">
-          <div className="card h-100 border-0 shadow-sm p-3 bg-white" style={{ borderLeft: "10px solid #28A745", borderRadius: "10px" }}>
+      <div className="row g-3 g-md-4 mb-4">
+        <div className="col-sm-6 col-md-4">
+          <div className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white" style={{ borderLeft: "10px solid #28A745", borderRadius: "10px" }}>
             <div className="card-body d-flex align-items-center">
-              <FaMoneyBillWave className="me-4 text-success" size={40} />
+              <FaMoneyBillWave className="me-3 me-md-4 text-success" size={35} />
               <div>
-                <h6 className="fw-bold small mb-1 text-uppercase text-muted">Pendapatan</h6>
-                <h3 className="fw-bold mb-0">Rp. {summary.income.toLocaleString("id-ID")}</h3>
+                <h6 className="fw-bold small mb-1 text-uppercase text-muted" style={{ fontSize: '0.75rem' }}>Pendapatan</h6>
+                <h3 className="fw-bold mb-0" style={{ fontSize: 'calc(1.1rem + 0.3vw)' }}>Rp. {summary.income.toLocaleString("id-ID")}</h3>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="card h-100 border-0 shadow-sm p-3 bg-white" style={{ borderLeft: "10px solid #DC3545", borderRadius: "10px" }}>
+        <div className="col-sm-6 col-md-4">
+          <div className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white" style={{ borderLeft: "10px solid #DC3545", borderRadius: "10px" }}>
             <div className="card-body d-flex align-items-center">
-              <BsFillBagCheckFill className="me-4 text-danger" size={40} />
+              <BsFillBagCheckFill className="me-3 me-md-4 text-danger" size={35} />
               <div>
-                <h6 className="fw-bold small mb-1 text-uppercase text-muted">Pengeluaran</h6>
-                <h3 className="fw-bold mb-0">Rp. {summary.expense.toLocaleString("id-ID")}</h3>
+                <h6 className="fw-bold small mb-1 text-uppercase text-muted" style={{ fontSize: '0.75rem' }}>Pengeluaran</h6>
+                <h3 className="fw-bold mb-0" style={{ fontSize: 'calc(1.1rem + 0.3vw)' }}>Rp. {summary.expense.toLocaleString("id-ID")}</h3>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="card h-100 border-0 shadow-sm p-3 bg-white" style={{ borderLeft: "10px solid #AF52DE", borderRadius: "10px" }}>
+        <div className="col-sm-12 col-md-4">
+          <div className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white" style={{ borderLeft: "10px solid #AF52DE", borderRadius: "10px" }}>
             <div className="card-body d-flex align-items-center">
-              <MdSavings className="me-4" size={45} style={{ color: "#AF52DE" }} />
+              <MdSavings className="me-3 me-md-4" size={40} style={{ color: "#AF52DE" }} />
               <div>
-                <h6 className="fw-bold small mb-1 text-uppercase text-muted">Rasio Tabungan</h6>
-                <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
+                <h6 className="fw-bold small mb-1 text-uppercase text-muted" style={{ fontSize: '0.75rem' }}>Rasio Tabungan</h6>
+                <h2 className="fw-bold mb-0" style={{ fontSize: 'calc(1.2rem + 0.4vw)' }}>{summary.ratio} %</h2>
                 <span className="text-muted small fw-semibold">Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}</span>
               </div>
             </div>

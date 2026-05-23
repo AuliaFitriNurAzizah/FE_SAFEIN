@@ -65,7 +65,7 @@ function Register() {
         </div>
 
         {/* SISI KANAN: Form Registrasi */}
-        <div className="col-lg-5 d-flex align-items-center justify-content-center bg-white p-5">
+        <div className="col-lg-5 d-flex align-items-center justify-content-center bg-white p-4 p-md-5">
           <div style={{ maxWidth: "380px", width: "100%" }}>
             <div className="mb-5">
               <h2 className="fw-bold text-safein-navy mb-1">SAFEIN</h2>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import MainLayout from '../components/MainLayout';
+import Pagination from '../components/Pagination';
 import { 
   BsPlusLg, 
   BsPencilSquare, 
@@ -22,6 +23,10 @@ const Pengeluaran = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   
   const [formData, setFormData] = useState({
     amount: '',
@@ -166,6 +171,20 @@ const Pengeluaran = () => {
     );
   });
 
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredExpenses.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredExpenses.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   return (
     <MainLayout user={user}>
       {/* SUMMARY CARD */}
@@ -244,11 +263,11 @@ const Pengeluaran = () => {
                 <tr>
                   <td colSpan="7" className="text-center py-5 text-muted">Memuat data...</td>
                 </tr>
-              ) : filteredExpenses.length > 0 ? (
-                filteredExpenses.map((exp, index) => (
+              ) : currentItems.length > 0 ? (
+                currentItems.map((exp, index) => (
                   <tr key={exp.id}>
                     {/* KOLOM NOMOR */}
-                    <td className="ps-4 text-secondary small">{index + 1}</td>
+                    <td className="ps-4 text-secondary small">{indexOfFirstItem + index + 1}</td>
                     <td>{new Date(exp.date).toLocaleDateString('id-ID')}</td>
                     <td>
                       <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-10 px-3 py-2">
@@ -290,6 +309,12 @@ const Pengeluaran = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
 
       {/* MODAL (Tetap Sama) */}

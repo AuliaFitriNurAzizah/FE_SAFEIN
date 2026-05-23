@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../utils/api";
 import MainLayout from "../components/MainLayout";
+import Pagination from "../components/Pagination";
 import {
   BsTrash,
   BsPencilSquare,
@@ -21,6 +22,10 @@ const Pemasukan = () => {
   const [totalIncome, setTotalIncome] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [currentId, setCurrentId] = useState(null);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const [formData, setFormData] = useState({
     amount: "",
@@ -164,6 +169,20 @@ const Pemasukan = () => {
     );
   });
 
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredTransactions.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   return (
     <MainLayout user={user}>
       {/* SUMMARY CARD */}
@@ -225,16 +244,16 @@ const Pemasukan = () => {
                     <div className="spinner-border spinner-border-sm text-success me-2"></div> Memuat data...
                   </td>
                 </tr>
-              ) : filteredTransactions.length === 0 ? (
+              ) : currentItems.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-5 text-muted">
                     {searchQuery ? "Data tidak ditemukan." : "Belum ada transaksi pemasukan."}
                   </td>
                 </tr>
               ) : (
-                filteredTransactions.map((t, index) => (
+                currentItems.map((t, index) => (
                   <tr key={t.id}>
-                    <td className="ps-3 text-muted">{index + 1}</td>
+                    <td className="ps-3 text-muted">{indexOfFirstItem + index + 1}</td>
                     <td>{new Date(t.date).toLocaleDateString("id-ID")}</td>
                     <td>
                       <span className="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
@@ -257,6 +276,12 @@ const Pemasukan = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
 
       {/* MODAL SECTION */}

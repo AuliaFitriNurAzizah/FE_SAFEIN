@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../utils/api";
 import MainLayout from "../components/MainLayout";
+import Pagination from "../components/Pagination";
 import { BsTags, BsPlusLg, BsPencilSquare, BsTrash } from "react-icons/bs";
 import { showAlert, showConfirm, showToast } from "../utils/swal";
 
@@ -14,6 +15,10 @@ const Kategori = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [formData, setFormData] = useState({ name: "", type: "expense" });
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const fetchData = async () => {
     setLoading(true);
@@ -81,6 +86,16 @@ const Kategori = () => {
     }
   };
 
+  // Pagination Logic
+  const totalPages = Math.ceil(categories.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = categories.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <MainLayout user={user}>
       <div className="card border-0 shadow-sm rounded-4 p-4 text-dark">
@@ -122,10 +137,10 @@ const Kategori = () => {
                     Memuat data...
                   </td>
                 </tr>
-              ) : categories.length > 0 ? (
-                categories.map((cat, index) => (
+              ) : currentItems.length > 0 ? (
+                currentItems.map((cat, index) => (
                   <tr key={cat.id || index}>
-                    <td className="ps-4 text-muted">{index + 1}</td>
+                    <td className="ps-4 text-muted">{indexOfFirstItem + index + 1}</td>
                     <td><span className="fw-semibold">{cat.name || "-"}</span></td>
                     <td>
                       <span className={`badge rounded-pill px-3 py-2 ${
@@ -152,9 +167,15 @@ const Kategori = () => {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
 
-      {/* --- POPUP MODAL (Berdasarkan image_9ec7b9.png) --- */}
+      {/* --- POPUP MODAL --- */}
       {showModal && (
         <div 
           className="modal fade show d-block" 

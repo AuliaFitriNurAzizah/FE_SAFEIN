@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import MainLayout from '../components/MainLayout';
 import { 
-  BsCashStack, 
   BsPlusLg, 
   BsPencilSquare, 
   BsTrash, 
@@ -194,17 +193,6 @@ const Pengeluaran = () => {
       </div>
 
       <div className="card border-0 shadow-sm rounded-4 p-4 text-dark">
-        {/* HEADER */}
-        <div className="d-flex align-items-center mb-3">
-          <div className="bg-primary bg-opacity-10 p-3 rounded-3 me-3 text-primary">
-            <BsCashStack size={24} />
-          </div>
-          <div>
-            <h4 className="fw-bold mb-0">Manajemen Pengeluaran</h4>
-            <p className="text-muted small mb-0">Catat dan pantau setiap uang keluar Anda.</p>
-          </div>
-        </div>
-        
         {/* ACTION BAR */}
         <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
           <div className="d-flex gap-2">

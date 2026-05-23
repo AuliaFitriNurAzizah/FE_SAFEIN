@@ -127,26 +127,36 @@ const MainLayout = ({ children, user }) => {
             <div className="d-none d-md-block" style={{ width: '280px', flexShrink: 0 }}></div>
             
             <div className="flex-grow-1">
-              <div className="d-flex justify-content-between align-items-center shadow-sm mb-4 px-3 px-md-4 py-2" 
-                   style={{ backgroundColor: '#001E3C', borderRadius: '10px', color: 'white' }}>
-                
-                <div className="d-flex align-items-center">
-                  <button className="btn text-white d-md-none me-2 p-0" onClick={toggleSidebar}>
-                    <MdMenu size={28} />
-                  </button>
-                  <span className="small d-none d-sm-inline">
-                    Selamat Datang, <span className="fw-semibold text-light">{user?.name}</span> !
-                  </span>
-                  <span className="small d-sm-none">
-                    Halo, <span className="fw-semibold text-light">{user?.name?.split(' ')[0]}</span>
-                  </span>
-                </div>
+              {location.pathname === '/dashboard' && (
+                <div className="d-flex justify-content-between align-items-center shadow-sm mb-4 px-3 px-md-4 py-2" 
+                     style={{ backgroundColor: '#001E3C', borderRadius: '10px', color: 'white' }}>
+                  
+                  <div className="d-flex align-items-center">
+                    <button className="btn text-white d-md-none me-2 p-0" onClick={toggleSidebar}>
+                      <MdMenu size={28} />
+                    </button>
+                    <span className="small d-none d-sm-inline">
+                      Selamat Datang, <span className="fw-semibold text-light">{user?.name}</span> !
+                    </span>
+                    <span className="small d-sm-none">
+                      Selamat Datang, <span className="fw-semibold text-light">{user?.name?.split(' ')[0]}</span>
+                    </span>
+                  </div>
 
-                <div className="bg-danger rounded-circle d-flex align-items-center justify-content-center fw-bold border border-2 border-white shadow-sm" 
-                     style={{ width: '35px', height: '35px', fontSize: '0.8rem' }}>
-                  {user?.name ? user.name.substring(0, 2).toUpperCase() : "??"}
+                  <div className="bg-danger rounded-circle d-flex align-items-center justify-content-center fw-bold border border-2 border-white shadow-sm" 
+                       style={{ width: '35px', height: '35px', fontSize: '0.8rem' }}>
+                    {user?.name ? user.name.substring(0, 2).toUpperCase() : "??"}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {location.pathname !== '/dashboard' && (
+                <div className="d-md-none mb-3">
+                   <button className="btn btn-dark" onClick={toggleSidebar}>
+                      <MdMenu size={24} />
+                   </button>
+                </div>
+              )}
               
               <div className="container-fluid p-0">
                 {children}

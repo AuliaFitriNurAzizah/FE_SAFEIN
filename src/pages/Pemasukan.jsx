@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import api from "../utils/api";
 import MainLayout from "../components/MainLayout";
 import {
-  BsGraphUpArrow,
   BsTrash,
   BsPencilSquare,
   BsPlusLg,
@@ -185,16 +184,6 @@ const Pemasukan = () => {
       </div>
 
       <div className="card border-0 shadow-sm rounded-4 p-4 text-dark">
-        <div className="d-flex align-items-center mb-3">
-          <div className="bg-success bg-opacity-10 p-3 rounded-3 me-3">
-            <BsGraphUpArrow className="text-success" size={24} />
-          </div>
-          <div>
-            <h4 className="fw-bold mb-0">Manajemen Pemasukan</h4>
-            <p className="text-muted small mb-0">Kelola semua transaksi pemasukan Anda di sini.</p>
-          </div>
-        </div>
-        
         <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
           <div className="d-flex gap-2 w-100 w-sm-auto">
             <button className="btn btn-primary d-flex align-items-center gap-2 px-4 fw-bold shadow-sm" onClick={() => openModal()}>

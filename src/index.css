@@ -206,8 +206,52 @@ body {
 .dot-yellow { background: #ffbd2e; }
 .dot-green { background: #27c93f; }
 
-/* Custom scrollbar */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--safein-off-white); }
-::-webkit-scrollbar-thumb { background: var(--safein-slate); border-radius: 10px; border: 2px solid var(--safein-off-white); }
-::-webkit-scrollbar-thumb:hover { background: var(--safein-navy); }
+/* Auth Pages Specific */
+.auth-card {
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+}
+
+.auth-input {
+  border: 1.5px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.auth-input:focus {
+  border-color: var(--safein-blue);
+  box-shadow: 0 0 0 4px rgba(63, 114, 175, 0.1);
+  background-color: white;
+}
+
+.branding-panel {
+  background: linear-gradient(135deg, var(--safein-navy) 0%, #1a3c61 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.branding-content {
+  position: relative;
+  z-index: 2;
+}
+
+.branding-bg-shape {
+  position: absolute;
+  background: linear-gradient(45deg, rgba(63, 114, 175, 0.2), transparent);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 100px;
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+

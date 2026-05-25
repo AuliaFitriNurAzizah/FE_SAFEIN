@@ -6,7 +6,15 @@ import { Link } from "react-router-dom";
 
 import { MdSavings } from "react-icons/md";
 import { FaMoneyBillWave } from "react-icons/fa";
-import { BsFillBagCheckFill } from "react-icons/bs";
+import { 
+  BsFillBagCheckFill, 
+  BsShieldCheck, 
+  BsExclamationTriangle, 
+  BsExclamationOctagon, 
+  BsQuestionCircle, 
+  BsLightbulbFill, 
+  BsGraphUp 
+} from "react-icons/bs";
 import { showAlert } from "../utils/swal";
 
 // =========================
@@ -376,31 +384,56 @@ const Dashboard = () => {
   // =========================
   const getPredictionStyle = () => {
     const label = prediction.label?.toLowerCase();
+    const isDataAvailable = summary.income > 0 || summary.expense > 0;
+
+    if (!isDataAvailable) {
+      return {
+        bg: "#F8F9FA",
+        border: "#DEE2E6",
+        text: "#495057",
+        accent: "#6C757D",
+        icon: <BsQuestionCircle size={20} />,
+        status: "No Data"
+      };
+    }
+
     if (label === "aman") {
       return {
-        bg: "#E8F5E9",
-        border: "8px solid #28A745",
-        text: "#1B5E20",
+        bg: "#F0FDF4",
+        border: "#22C55E",
+        text: "#166534",
+        accent: "#22C55E",
+        icon: <BsShieldCheck size={20} />,
+        status: "Aman"
       };
     }
     if (label === "rawan") {
       return {
-        bg: "#FFF3E0",
-        border: "8px solid #FD7E14",
-        text: "#E65100",
+        bg: "#FFFBEB",
+        border: "#F59E0B",
+        text: "#92400E",
+        accent: "#F59E0B",
+        icon: <BsExclamationTriangle size={20} />,
+        status: "Rawan"
       };
     }
     if (label === "bahaya") {
       return {
-        bg: "#FFEBEE",
-        border: "8px solid #DC3545",
-        text: "#B71C1C",
+        bg: "#FEF2F2",
+        border: "#EF4444",
+        text: "#991B1B",
+        accent: "#EF4444",
+        icon: <BsExclamationOctagon size={20} />,
+        status: "Bahaya"
       };
     }
     return {
       bg: "#F8F9FA",
-      border: "8px solid #DEE2E6",
-      text: "#6C757D",
+      border: "#DEE2E6",
+      text: "#495057",
+      accent: "#6C757D",
+      icon: <BsQuestionCircle size={20} />,
+      status: "Unknown"
     };
   };
 
@@ -484,39 +517,88 @@ const Dashboard = () => {
 
       {/* PREDIKSI & ESTIMASI */}
       <div className="row mb-4">
-        <div className="col-md-12">
+        {/* PREDIKSI */}
+        <div className="col-12 mb-3">
           <div
-            className="p-4 mb-3 shadow-sm"
-            style={{
-              backgroundColor: (summary.income > 0 || summary.expense > 0) ? predStyle.bg : "#F8F9FA",
-              borderRadius: "10px",
-              borderLeft: (summary.income > 0 || summary.expense > 0) ? predStyle.border : "8px solid #DEE2E6",
-            }}
+            className="card border-0 shadow-sm overflow-hidden position-relative"
+            style={{ borderRadius: "16px", background: "white" }}
           >
-            <h5 className="fw-bold mb-1" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
-              Prediksi Kondisi Keuangan:
-            </h5>
-            <p className="mb-0 small fw-medium" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
-              {(summary.income > 0 || summary.expense > 0) ? (prediction.analysis || "Belum ada analisis.") : "Belum ada data untuk dianalisis."}
-            </p>
+            <div 
+              className="position-absolute top-0 start-0 bottom-0" 
+              style={{ width: "12px", backgroundColor: predStyle.border }}
+            ></div>
+            <div className="card-body p-4 ms-3">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <div className="d-flex align-items-center">
+                  <div 
+                    className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center" 
+                    style={{ backgroundColor: predStyle.bg, color: predStyle.accent, border: `1px solid ${predStyle.border}` }}
+                  >
+                    <BsGraphUp size={22} />
+                  </div>
+                  <h5 className="fw-bold mb-0 text-dark">
+                    Prediksi Kondisi Keuangan
+                  </h5>
+                </div>
+                <span 
+                  className="badge px-3 py-2" 
+                  style={{ 
+                    backgroundColor: predStyle.border, 
+                    color: "white",
+                    fontSize: "0.75rem",
+                    fontWeight: "700",
+                    borderRadius: "8px",
+                    textTransform: "uppercase"
+                  }}
+                >
+                  {predStyle.status}
+                </span>
+              </div>
+              
+              <div className="mt-2 p-3 rounded-3" style={{ backgroundColor: `${predStyle.bg}88`, borderLeft: `4px solid ${predStyle.border}` }}>
+                <p className="mb-0 fw-semibold text-dark" style={{ fontSize: "1.05rem", lineHeight: "1.6" }}>
+                  {(summary.income > 0 || summary.expense > 0) 
+                    ? (prediction.analysis || "Belum ada analisis.") 
+                    : "Belum ada data untuk dianalisis."}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div
-        className="p-4 mb-4 shadow-sm"
-        style={{
-          backgroundColor: (summary.income > 0 || summary.expense > 0) ? predStyle.bg : "#F8F9FA",
-          borderRadius: "10px",
-          borderLeft: (summary.income > 0 || summary.expense > 0) ? predStyle.border : "8px solid #DEE2E6",
-        }}
-      >
-        <h5 className="fw-bold mb-1" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
-          Estimasi Bulan Depan:
-        </h5>
-        <p className="mb-0 small fw-medium" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
-          {(summary.income > 0 || summary.expense > 0) ? (prediction.nextMonthEstimation || "Belum ada estimasi.") : "Belum ada data untuk estimasi."}
-        </p>
+        {/* ESTIMASI */}
+        <div className="col-12">
+          <div
+            className="card border-0 shadow-sm overflow-hidden position-relative"
+            style={{ borderRadius: "16px", background: "white" }}
+          >
+            <div 
+              className="position-absolute top-0 start-0 bottom-0" 
+              style={{ width: "12px", backgroundColor: "#0D6EFD" }}
+            ></div>
+            <div className="card-body p-4 ms-3">
+              <div className="d-flex align-items-center mb-3">
+                <div 
+                  className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center" 
+                  style={{ backgroundColor: "#E7F1FF", color: "#0D6EFD", border: "1px solid #0D6EFD" }}
+                >
+                  <BsLightbulbFill size={22} />
+                </div>
+                <h5 className="fw-bold mb-0 text-dark">
+                  Estimasi & Tips Keuangan
+                </h5>
+              </div>
+              
+              <div className="mt-2 p-3 rounded-3" style={{ backgroundColor: "#F0F7FF", borderLeft: "4px solid #0D6EFD" }}>
+                <p className="mb-0 fw-semibold text-dark" style={{ fontSize: "1.05rem", lineHeight: "1.6" }}>
+                  {(summary.income > 0 || summary.expense > 0) 
+                    ? (prediction.nextMonthEstimation || "Belum ada estimasi.") 
+                    : "Belum ada data untuk estimasi."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* CHART */}

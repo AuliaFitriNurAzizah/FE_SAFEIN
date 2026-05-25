@@ -18,7 +18,12 @@ const Kategori = () => {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -100,8 +105,8 @@ const Kategori = () => {
     <MainLayout user={user}>
       <div className="card border-0 shadow-sm rounded-4 p-4 text-dark">
         {/* Header Section */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div className="d-flex align-items-center">
+        <div className="mb-4">
+          <div className="d-flex align-items-center mb-3">
             <div className="bg-primary bg-opacity-10 p-3 rounded-3 me-3 text-primary">
               <BsTags size={24} />
             </div>
@@ -110,12 +115,29 @@ const Kategori = () => {
               <p className="text-muted small mb-0">Kelola kategori transaksi Anda.</p>
             </div>
           </div>
-          <button
-            className="btn btn-primary d-flex align-items-center gap-2 px-4 fw-bold shadow-sm"
-            onClick={() => handleOpenModal()}
-          >
-            <BsPlusLg /> Tambah Baru
-          </button>
+
+          <div className="d-flex flex-wrap align-items-center gap-3">
+            <button
+              className="btn btn-primary d-flex align-items-center gap-2 px-4 fw-bold shadow-sm"
+              onClick={() => handleOpenModal()}
+            >
+              <BsPlusLg /> Tambah Baru
+            </button>
+            <div className="d-flex align-items-center gap-2">
+              <span className="text-muted small fw-semibold d-none d-lg-inline">Data per halaman:</span>
+              <select 
+                className="form-select form-select-sm shadow-sm border-secondary border-opacity-10 fw-semibold text-muted" 
+                style={{ width: 'auto', borderRadius: '8px', cursor: 'pointer' }}
+                value={itemsPerPage}
+                onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+              >
+                <option value={5}>5 Data</option>
+                <option value={10}>10 Data</option>
+                <option value={15}>15 Data</option>
+                <option value={20}>20 Data</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Tabel Data */}
@@ -172,6 +194,9 @@ const Kategori = () => {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
+          itemsPerPage={itemsPerPage}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          showItemsPerPage={false}
         />
       </div>
 

@@ -26,7 +26,12 @@ const Pengeluaran = () => {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
   
   const [formData, setFormData] = useState({
     amount: '',
@@ -187,60 +192,81 @@ const Pengeluaran = () => {
 
   return (
     <MainLayout user={user}>
-      {/* SUMMARY CARD */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div
-            className="card border-0 shadow-sm p-3 bg-white"
-            style={{ borderLeft: "10px solid #DC3545", borderRadius: "10px" }}
-          >
-            <div className="card-body d-flex align-items-center">
-              <div className="bg-danger bg-opacity-10 p-3 rounded-3 me-4 text-danger">
-                <BsFillBagCheckFill size={35} />
-              </div>
-              <div>
-                <h6 className="fw-bold small mb-1 text-uppercase text-muted">
-                  Total Pengeluaran
-                </h6>
-                <h2 className="fw-bold mb-0 text-dark">
-                  Rp {totalExpense.toLocaleString("id-ID")}
-                </h2>
-              </div>
+      {/* SUMMARY SECTION */}
+      <div className="mb-4">
+        {/* Total Pengeluaran Card */}
+        <div className="card border-0 shadow-sm p-3 bg-white" style={{ borderLeft: "10px solid #DC3545", borderRadius: "10px" }}>
+          <div className="card-body d-flex align-items-center">
+            <div className="bg-danger bg-opacity-10 p-3 rounded-3 me-4 text-danger">
+              <BsFillBagCheckFill size={35} />
+            </div>
+            <div>
+              <h6 className="fw-bold small mb-1 text-uppercase text-muted">Total Pengeluaran</h6>
+              <h2 className="fw-bold mb-0 text-dark">Rp {totalExpense.toLocaleString("id-ID")}</h2>
             </div>
           </div>
         </div>
       </div>
 
       <div className="card border-0 shadow-sm rounded-4 p-4 text-dark">
-        {/* ACTION BAR */}
-        <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
-          <div className="d-flex gap-2">
-            <button 
-              className="btn btn-primary d-flex align-items-center gap-2 px-4 fw-bold shadow-sm"
-              onClick={() => handleOpenModal()}
-            >
-              <BsPlusLg /> Tambah Baru
-            </button>
-            <button 
-              className="btn btn-outline-success d-flex align-items-center gap-2 px-4 fw-bold shadow-sm"
-              onClick={handleExport}
-              disabled={expenses.length === 0}
-            >
-              <BsDownload /> Export
-            </button>
+        {/* Header Section */}
+        <div className="mb-4">
+          <div className="d-flex align-items-center mb-3">
+            <div className="bg-danger bg-opacity-10 p-3 rounded-3 me-3 text-danger">
+              <BsFillBagCheckFill size={24} />
+            </div>
+            <div>
+              <h4 className="fw-bold mb-0">Manajemen Pengeluaran</h4>
+              <p className="text-muted small mb-0">Kelola data transaksi pengeluaran Anda.</p>
+            </div>
           </div>
 
-          <div className="input-group shadow-sm" style={{ maxWidth: "320px" }}>
-            <span className="input-group-text bg-white border-end-0 text-muted">
-              <BsSearch />
-            </span>
-            <input
-              type="text"
-              className="form-control border-start-0 ps-1 shadow-none"
-              placeholder="Cari keterangan, kategori..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div className="d-flex flex-wrap align-items-center gap-3 w-100 w-sm-auto">
+              <div className="d-flex gap-2">
+                <button 
+                  className="btn btn-primary d-flex align-items-center gap-2 px-4 fw-bold shadow-sm"
+                  onClick={() => handleOpenModal()}
+                >
+                  <BsPlusLg /> Tambah Baru
+                </button>
+                <button 
+                  className="btn btn-outline-success d-flex align-items-center gap-2 px-4 fw-bold shadow-sm"
+                  onClick={handleExport}
+                  disabled={expenses.length === 0}
+                >
+                  <BsDownload /> Export
+                </button>
+              </div>
+
+              <div className="d-flex align-items-center gap-2">
+                <span className="text-muted small fw-semibold d-none d-lg-inline">Data per halaman:</span>
+                <select 
+                  className="form-select form-select-sm shadow-sm border-secondary border-opacity-10 fw-semibold text-muted" 
+                  style={{ width: 'auto', borderRadius: '8px', cursor: 'pointer' }}
+                  value={itemsPerPage}
+                  onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                >
+                  <option value={5}>5 Data</option>
+                  <option value={10}>10 Data</option>
+                  <option value={15}>15 Data</option>
+                  <option value={20}>20 Data</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="input-group shadow-sm" style={{ maxWidth: "320px" }}>
+              <span className="input-group-text bg-white border-end-0 text-muted">
+                <BsSearch />
+              </span>
+              <input
+                type="text"
+                className="form-control border-start-0 ps-1 shadow-none"
+                placeholder="Cari keterangan, kategori..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
         </div>
 
@@ -270,7 +296,7 @@ const Pengeluaran = () => {
                     <td className="ps-4 text-secondary small">{indexOfFirstItem + index + 1}</td>
                     <td>{new Date(exp.date).toLocaleDateString('id-ID')}</td>
                     <td>
-                      <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-10 px-3 py-2">
+                      <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-10 px-3 py-2 rounded-pill" style={{ fontSize: "0.75rem" }}>
                         {exp.Category?.name || exp.category?.name || 'Umum'}
                       </span>
                     </td>
@@ -314,6 +340,9 @@ const Pengeluaran = () => {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
+          itemsPerPage={itemsPerPage}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          showItemsPerPage={false}
         />
       </div>
 

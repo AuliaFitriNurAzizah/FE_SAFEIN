@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { MdSavings } from "react-icons/md";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { BsFillBagCheckFill } from "react-icons/bs";
+import { showAlert } from "../utils/swal";
 
 // =========================
 // DATE PICKER
@@ -66,8 +67,8 @@ const Dashboard = () => {
   // PREDICTION
   // =========================
   const [prediction, setPrediction] = useState({
-    analysis: "Sedang menganalisis data keuangan Anda...",
-    nextMonthEstimation: "Menghitung proyeksi pengeluaran...",
+    analysis: "",
+    nextMonthEstimation: "",
     label: "",
   });
 
@@ -176,23 +177,39 @@ const Dashboard = () => {
         });
 
         // =========================
+        // NEW USER ALERT
+        // =========================
+        if (income === 0 && expense === 0) {
+          showAlert(
+            "Halo!",
+            "info",
+            "Selamat datang! Silakan isi data Pemasukan dan Pengeluaran Anda terlebih dahulu agar sistem dapat menganalisis kondisi keuangan Anda."
+          ).then(() => {
+            navigate("/pemasukan");
+          });
+        }
+
+        // =========================
         // PREDICTION DATA
         // =========================
         const predData = predictionRes?.data?.data;
 
-        setPrediction({
-          analysis: predData?.prediction?.label
-            ? `Kondisi keuangan kamu ${predData.prediction.label} (${(
-                predData.prediction.confidence * 100
-              ).toFixed(1)}% confidence)`
-            : "Tidak ada data analisis tersedia.",
-
-          nextMonthEstimation:
-            predData?.prediction?.rekomendasi ||
-            "Belum ada rekomendasi untuk saat ini.",
-
-          label: predData?.prediction?.label || "",
-        });
+        if (predData?.prediction?.label) {
+          setPrediction({
+            analysis: `Kondisi keuangan kamu ${predData.prediction.label} (${(
+              predData.prediction.confidence * 100
+            ).toFixed(1)}% confidence)`,
+            nextMonthEstimation: predData.prediction.rekomendasi || "Belum ada rekomendasi untuk saat ini.",
+            label: predData.prediction.label,
+          });
+        } else {
+          // Tetap kosong jika tidak ada data analisis (user baru)
+          setPrediction({
+            analysis: "",
+            nextMonthEstimation: "",
+            label: "",
+          });
+        }
 
         // =========================
         // CHART DATA
@@ -480,7 +497,7 @@ const Dashboard = () => {
               Prediksi Kondisi Keuangan:
             </h5>
 
-            <p className="mb-0 small fw-medium" style={{ color: predStyle.text }}>{prediction.analysis}</p>
+            <p className="mb-0 small fw-medium" style={{ color: predStyle.text }}>{prediction.analysis || "-"}</p>
           </div>
         </div>
       </div>
@@ -497,7 +514,7 @@ const Dashboard = () => {
         <h5 className="fw-bold mb-1" style={{ color: predStyle.text }}>Estimasi Bulan Depan:</h5>
 
         <p className="mb-0 small fw-medium" style={{ color: predStyle.text }}>
-          {prediction.nextMonthEstimation}
+          {prediction.nextMonthEstimation || "-"}
         </p>
       </div>
 

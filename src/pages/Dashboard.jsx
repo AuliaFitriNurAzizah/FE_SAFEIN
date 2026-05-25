@@ -293,7 +293,7 @@ const Dashboard = () => {
 
               borderWidth: 3,
 
-              tension: 0.4,
+              tension: 0,
 
               pointRadius: 4,
 

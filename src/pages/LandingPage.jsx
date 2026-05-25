@@ -104,7 +104,7 @@ function LandingPage() {
               <span className="dot dot-red"></span>
               <span className="dot dot-yellow"></span>
               <span className="dot dot-green"></span>
-              <div className="ms-3 small text-muted fw-medium">safein-adaptive-financial-intellige.vercel.app</div>
+              <div className="ms-3 text-muted fw-medium text-truncate d-none d-sm-block" style={{ fontSize: '0.65rem', letterSpacing: '0.5px' }}>safein-adaptive-financial-intellige.vercel.app</div>
             </div>
             <div className="p-3 p-md-5 bg-light bg-opacity-50">
               <div className="row g-4">

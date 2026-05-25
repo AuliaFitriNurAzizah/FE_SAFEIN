@@ -482,39 +482,40 @@ const Dashboard = () => {
 </div>
       
 
-      {/* PREDIKSI */}
+      {/* PREDIKSI & ESTIMASI */}
       <div className="row mb-4">
         <div className="col-md-12">
           <div
             className="p-4 mb-3 shadow-sm"
             style={{
-              backgroundColor: predStyle.bg,
+              backgroundColor: (summary.income > 0 || summary.expense > 0) ? predStyle.bg : "#F8F9FA",
               borderRadius: "10px",
-              borderLeft: predStyle.border,
+              borderLeft: (summary.income > 0 || summary.expense > 0) ? predStyle.border : "8px solid #DEE2E6",
             }}
           >
-            <h5 className="fw-bold mb-1" style={{ color: predStyle.text }}>
+            <h5 className="fw-bold mb-1" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
               Prediksi Kondisi Keuangan:
             </h5>
-
-            <p className="mb-0 small fw-medium" style={{ color: predStyle.text }}>{prediction.analysis || "-"}</p>
+            <p className="mb-0 small fw-medium" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
+              {(summary.income > 0 || summary.expense > 0) ? (prediction.analysis || "Belum ada analisis.") : "Belum ada data untuk dianalisis."}
+            </p>
           </div>
         </div>
       </div>
 
-      {/* ESTIMASI */}
       <div
         className="p-4 mb-4 shadow-sm"
         style={{
-          backgroundColor: predStyle.bg,
+          backgroundColor: (summary.income > 0 || summary.expense > 0) ? predStyle.bg : "#F8F9FA",
           borderRadius: "10px",
-          borderLeft: predStyle.border,
+          borderLeft: (summary.income > 0 || summary.expense > 0) ? predStyle.border : "8px solid #DEE2E6",
         }}
       >
-        <h5 className="fw-bold mb-1" style={{ color: predStyle.text }}>Estimasi Bulan Depan:</h5>
-
-        <p className="mb-0 small fw-medium" style={{ color: predStyle.text }}>
-          {prediction.nextMonthEstimation || "-"}
+        <h5 className="fw-bold mb-1" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
+          Estimasi Bulan Depan:
+        </h5>
+        <p className="mb-0 small fw-medium" style={{ color: (summary.income > 0 || summary.expense > 0) ? predStyle.text : "#6C757D" }}>
+          {(summary.income > 0 || summary.expense > 0) ? (prediction.nextMonthEstimation || "Belum ada estimasi.") : "Belum ada data untuk estimasi."}
         </p>
       </div>
 

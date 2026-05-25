@@ -45,8 +45,8 @@ function LandingPage() {
       {/* Hero Section */}
       <header className="container d-flex flex-column align-items-center justify-content-center text-center px-4" style={{ minHeight: "100vh", paddingTop: "100px" }}>
         <div className="animate-fade-in-up" style={{ maxWidth: "1000px" }}>
-          <span className="badge rounded-pill bg-safein-blue bg-opacity-10 text-safein-blue px-3 py-2 mb-4 fw-bold">
-            ✨ Keamanan Finansial di Tangan Anda
+          <span className="badge rounded-pill bg-safein-white bg-opacity-10 text-safein-blue px-3 py-2 mb-4 fw-bold">
+          Keamanan Finansial di Tangan Anda
           </span>
           <h1 className="display-2 fw-bold text-safein-navy mb-4">
             Kelola Keuangan dengan <br />
@@ -74,7 +74,7 @@ function LandingPage() {
               <span className="dot dot-red"></span>
               <span className="dot dot-yellow"></span>
               <span className="dot dot-green"></span>
-              <div className="ms-3 small text-muted fw-medium">app.safein.id/dashboard</div>
+              <div className="ms-3 small text-muted fw-medium">safein-adaptive-financial-intellige.vercel.app</div>
             </div>
             <div className="p-3 p-md-5 bg-light bg-opacity-50">
               <div className="row g-4">
@@ -166,7 +166,7 @@ function LandingPage() {
             { icon: "bi-shield-lock", title: "Enkripsi Berlapis", desc: "Data Anda dienkripsi dengan standar militer untuk memastikan privasi mutlak.", delay: "animate-delay-3" }
           ].map((feature, idx) => (
             <div className={`col-md-4 animate-fade-in-up ${feature.delay}`} key={idx}>
-              <div className={`card h-100 feature-card p-4 rounded-4 shadow-sm border-0 ${feature.highlight ? 'bg-safein-blue bg-opacity-10' : ''}`}>
+              <div className="card h-100 feature-card p-4 rounded-4 shadow-sm border-0">
                 <div className="icon-box shadow-sm" style={feature.highlight ? { backgroundColor: 'var(--safein-blue)', color: 'white' } : {}}>
                   <i className={`bi ${feature.icon}`}></i>
                 </div>

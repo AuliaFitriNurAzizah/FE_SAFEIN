@@ -114,11 +114,16 @@ function Login() {
               </div>
 
               <button
-                className="btn btn-safein w-100 py-2 fw-bold shadow-sm mb-3"
+                className="btn btn-safein w-100 py-2 fw-bold shadow-sm mb-2"
                 disabled={loading}
               >
                 {loading ? "Mohon Tunggu..." : "Masuk Sekarang"}
               </button>
+              <div className="text-center">
+                <Link to="/" className="text-muted small text-decoration-none">
+                  Kembali ke Beranda
+                </Link>
+              </div>
             </form>
 
             <div className="text-center mt-4">

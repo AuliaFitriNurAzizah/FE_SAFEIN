@@ -107,18 +107,18 @@ function Login() {
                   </>
                 ) : "Masuk Sekarang"}
               </button>
-              
-              <div className="text-center">
-                <Link to="/" className="text-muted small text-decoration-none hover-navy transition-all">
-                  <i className="bi bi-arrow-left me-1"></i> Kembali ke Beranda
-                </Link>
-              </div>
             </form>
 
-            <div className="text-center mt-5 p-4 rounded-4 bg-light">
+            <div className="text-center mt-5 p-4 rounded-4 bg-light mb-4">
               <span className="text-muted small">Belum punya akun? </span>
               <Link to="/register" className="text-safein-blue small text-decoration-none fw-bold">
                 Daftar Gratis
+              </Link>
+            </div>
+
+            <div className="text-center">
+              <Link to="/" className="text-muted small text-decoration-none hover-navy transition-all">
+                <i className="bi bi-arrow-left me-1"></i> Kembali ke Beranda
               </Link>
             </div>
           </div>

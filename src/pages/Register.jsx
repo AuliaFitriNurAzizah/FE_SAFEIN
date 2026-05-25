@@ -151,18 +151,18 @@ function Register() {
                   </>
                 ) : "Daftar Sekarang"}
               </button>
-              
-              <div className="text-center">
-                <Link to="/" className="text-muted small text-decoration-none hover-navy transition-all">
-                  <i className="bi bi-arrow-left me-1"></i> Kembali ke Beranda
-                </Link>
-              </div>
             </form>
 
-            <div className="text-center mt-5 p-4 rounded-4 bg-light">
+            <div className="text-center mt-5 p-4 rounded-4 bg-light mb-4">
               <span className="text-muted small">Sudah punya akun? </span>
               <Link to="/login" className="text-safein-blue small text-decoration-none fw-bold">
                 Masuk Disini
+              </Link>
+            </div>
+
+            <div className="text-center">
+              <Link to="/" className="text-muted small text-decoration-none hover-navy transition-all">
+                <i className="bi bi-arrow-left me-1"></i> Kembali ke Beranda
               </Link>
             </div>
           </div>

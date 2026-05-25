@@ -75,7 +75,7 @@ function Login() {
               <div className="mb-4">
                 <div className="d-flex justify-content-between">
                   <label className="form-label small fw-bold text-safein-navy">Password</label>
-                  <a href="#" className="text-safein-blue small text-decoration-none fw-medium">Lupa Password?</a>
+                  {/* <a href="#" className="text-safein-blue small text-decoration-none fw-medium">Lupa Password?</a> */}
                 </div>
                 <div className="input-group">
                   <input

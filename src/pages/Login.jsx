@@ -132,7 +132,7 @@ function Login() {
           
           <div className="branding-content text-center animate-fade-in-up" style={{ maxWidth: "500px" }}>
             <div className="glass-pill mb-4 animate-float">
-              ✨ Trusted by 50,000+ users
+              Solusi Cerdas Pengelolaan Finansial
             </div>
             <h1 className="display-4 fw-bold mb-4 leading-tight">Analisis Keuangan Cerdas Berbasis AI</h1>
             <p className="lead mb-5 opacity-75">

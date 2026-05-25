@@ -48,7 +48,7 @@ function Register() {
           
           <div className="branding-content text-center animate-fade-in-up" style={{ maxWidth: "520px" }}>
             <div className="glass-pill mb-4 animate-float">
-              🚀 Start your journey today
+               Start your journey today
             </div>
             <h1 className="display-4 fw-bold mb-4 leading-tight">Keputusan Finansial yang Lebih Baik</h1>
             <p className="lead mb-5 opacity-75">

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 function LandingPage() {
+  const [isNavExpanded, setIsNavExpanded] = useState(false);
+
   return (
     <div className="min-vh-100 hero-gradient position-relative">
       {/* Background Animated Blobs */}
@@ -20,22 +22,50 @@ function LandingPage() {
           <Link className="navbar-brand fw-bold text-safein-navy fs-3" to="/">
             <i className="bi bi-shield-lock-fill me-2 text-safein-blue"></i>SAFEIN
           </Link>
-          <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <button 
+            className="navbar-toggler border-0 shadow-none" 
+            type="button" 
+            onClick={() => setIsNavExpanded(!isNavExpanded)}
+          >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto align-items-center">
+          <div className={`collapse navbar-collapse ${isNavExpanded ? "show" : ""}`} id="navbarNav">
+            <ul className="navbar-nav ms-auto align-items-center py-3 py-lg-0">
               <li className="nav-item">
-                <a href="#fitur" className="nav-link fw-semibold px-3 text-safein-navy">Fitur</a>
+                <a 
+                  href="#fitur" 
+                  className="nav-link fw-semibold px-3 text-safein-navy"
+                  onClick={() => setIsNavExpanded(false)}
+                >
+                  Fitur
+                </a>
               </li>
               <li className="nav-item">
-                <a href="#testimoni" className="nav-link fw-semibold px-3 text-safein-navy">Testimoni</a>
+                <a 
+                  href="#testimoni" 
+                  className="nav-link fw-semibold px-3 text-safein-navy"
+                  onClick={() => setIsNavExpanded(false)}
+                >
+                  Testimoni
+                </a>
               </li>
               <li className="nav-item">
-                <Link to="/login" className="nav-link fw-semibold px-3 text-safein-navy">Login</Link>
+                <Link 
+                  to="/login" 
+                  className="nav-link fw-semibold px-3 text-safein-navy"
+                  onClick={() => setIsNavExpanded(false)}
+                >
+                  Login
+                </Link>
               </li>
-              <li className="nav-item ms-lg-2">
-                <Link to="/register" className="btn btn-safein px-4 rounded-pill fw-bold pulse-button">Daftar Gratis</Link>
+              <li className="nav-item ms-lg-2 mt-3 mt-lg-0">
+                <Link 
+                  to="/register" 
+                  className="btn btn-safein px-4 rounded-pill fw-bold pulse-button w-100"
+                  onClick={() => setIsNavExpanded(false)}
+                >
+                  Daftar Gratis
+                </Link>
               </li>
             </ul>
           </div>
@@ -45,8 +75,8 @@ function LandingPage() {
       {/* Hero Section */}
       <header className="container d-flex flex-column align-items-center justify-content-center text-center px-4" style={{ minHeight: "100vh", paddingTop: "100px" }}>
         <div className="animate-fade-in-up" style={{ maxWidth: "1000px" }}>
-          <span className="badge rounded-pill bg-safein-white bg-opacity-10 text-safein-blue px-3 py-2 mb-4 fw-bold">
-          Keamanan Finansial di Tangan Anda
+          <span className="badge rounded-pill bg-safein-white bg-opacity-10 text-safein-blue px-4 py-2 mb-4 fw-bold fs-6">
+            Keamanan Finansial di Tangan Anda
           </span>
           <h1 className="display-2 fw-bold text-safein-navy mb-4">
             Kelola Keuangan dengan <br />

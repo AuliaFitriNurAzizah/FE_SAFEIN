@@ -27,6 +27,8 @@ function App() {
         <Route path="/pendapatan" element={<Pemasukan />} />
         <Route path="/pengeluaran" element={<Pengeluaran />} />
         <Route path="/kategori" element={<Kategori />} /> 
+        <Route path="/pemasukan" element={<Pemasukan />} />   {/* WAJIB ADA */}
+  <Route path="/pengeluaran" element={<Pengeluaran />} /> {/* WAJIB ADA */}
       </Routes>
     </Router>
   );

@@ -28,7 +28,7 @@ function App() {
         <Route path="/pengeluaran" element={<Pengeluaran />} />
         <Route path="/kategori" element={<Kategori />} /> 
         <Route path="/pemasukan" element={<Pemasukan />} />   {/* WAJIB ADA */}
-  <Route path="/pengeluaran" element={<Pengeluaran />} /> {/* WAJIB ADA */}
+        <Route path="/pengeluaran" element={<Pengeluaran />} /> {/* WAJIB ADA */}
       </Routes>
     </Router>
   );

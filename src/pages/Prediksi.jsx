@@ -432,6 +432,17 @@ const Prediksi = () => {
           <h2 className="fw-bold mb-0 text-dark">Analisis & Prediksi Keuangan</h2>
         </div>
 
+        {/* INFO */}
+        <div
+          className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-center"
+          style={{ borderRadius: "12px", backgroundColor: "#E7F1FF" }}
+        >
+          <BsLightbulbFill className="text-primary me-3" size={20} />
+          <span className="fw-semibold text-dark">
+            Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan untuk mendapatkan hasil prediksi yang lebih akurat.
+          </span>
+        </div>
+
         {/* SUMMARY SECTION */}
         <div className="row g-3 g-md-4 mb-4">
           <div className="col-sm-6 col-md-4">
@@ -479,17 +490,6 @@ const Prediksi = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* INFO */}
-        <div
-          className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-center"
-          style={{ borderRadius: "12px", backgroundColor: "#E7F1FF" }}
-        >
-          <BsLightbulbFill className="text-primary me-3" size={20} />
-          <span className="fw-semibold text-dark">
-            Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan untuk mendapatkan hasil prediksi yang lebih akurat.
-          </span>
         </div>
 
         {/* PREDICTION CARDS */}

@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Pemasukan from './pages/Pemasukan'; 
 import Kategori from './pages/Kategori'; 
 import Pengeluaran from './pages/Pengeluaran'; 
+import Prediksi from './pages/Prediksi'; 
 
 function App() {
   return ( 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/pendapatan" element={<Pemasukan />} />
         <Route path="/pengeluaran" element={<Pengeluaran />} />
         <Route path="/kategori" element={<Kategori />} /> 
+        <Route path="/prediksi" element={<Prediksi />} /> 
         <Route path="/pemasukan" element={<Pemasukan />} />   {/* WAJIB ADA */}
         <Route path="/pengeluaran" element={<Pengeluaran />} /> {/* WAJIB ADA */}
       </Routes>

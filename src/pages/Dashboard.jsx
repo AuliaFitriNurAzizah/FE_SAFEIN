@@ -540,19 +540,24 @@ const Dashboard = () => {
                     Prediksi Kondisi Keuangan
                   </h5>
                 </div>
-                <span 
-                  className="badge px-3 py-2" 
-                  style={{ 
-                    backgroundColor: predStyle.border, 
-                    color: "white",
-                    fontSize: "0.75rem",
-                    fontWeight: "700",
-                    borderRadius: "8px",
-                    textTransform: "uppercase"
-                  }}
-                >
-                  {predStyle.status}
-                </span>
+                <div className="d-flex align-items-center gap-2">
+                  <Link to="/prediksi" className="btn btn-sm btn-outline-primary fw-bold px-3" style={{ borderRadius: '8px', fontSize: '0.75rem' }}>
+                    Lihat Detail
+                  </Link>
+                  <span 
+                    className="badge px-3 py-2" 
+                    style={{ 
+                      backgroundColor: predStyle.border, 
+                      color: "white",
+                      fontSize: "0.75rem",
+                      fontWeight: "700",
+                      borderRadius: "8px",
+                      textTransform: "uppercase"
+                    }}
+                  >
+                    {predStyle.status}
+                  </span>
+                </div>
               </div>
               
               <div className="mt-2 p-3 rounded-3" style={{ backgroundColor: `${predStyle.bg}88`, borderLeft: `4px solid ${predStyle.border}` }}>

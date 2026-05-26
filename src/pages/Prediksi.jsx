@@ -65,6 +65,10 @@ const Prediksi = () => {
     analysis: "",
     nextMonthEstimation: "",
     label: "",
+    predIncome: 0,
+    predExpense: 0,
+    forecastRecommendation: "",
+    forecastAnalysis: "",
   });
 
   // =========================
@@ -88,13 +92,14 @@ const Prediksi = () => {
       try {
         setLoading(true);
 
-        // Fetch user profile, summary, monthly summary (for 12 months), and latest analysis
-        const [profileRes, summaryRes, monthlyRes, predictionRes] =
+        // Fetch user profile, summary, monthly summary (for 12 months), latest analysis, and forecast
+        const [profileRes, summaryRes, monthlyRes, predictionRes, forecastRes] =
           await Promise.all([
             api.get("/users/me"),
             api.get("/transactions/summary"),
             api.get(`/transactions/summary/monthly?range=365d&groupBy=month`),
             api.get("/financial-analysis/latest"),
+            api.get("/expense-prediction/forecast"),
           ]);
 
         // USER DATA
@@ -108,6 +113,13 @@ const Prediksi = () => {
           expense: summaryData.totalExpense || 0,
         });
 
+        // FORECAST DATA
+        const forecastData = forecastRes.data?.data || {};
+        const predIncome = forecastData.pred_income || 0;
+        const predExpense = forecastData.pred_expense || 0;
+        const forecastRecommendation = forecastData.recommendation || forecastData.rekomendasi || "";
+        const forecastAnalysis = forecastData.analysis || forecastData.analisis || "";
+
         // PREDICTION DATA
         const predData = predictionRes?.data?.data;
         if (predData?.prediction?.label) {
@@ -117,7 +129,13 @@ const Prediksi = () => {
             ).toFixed(1)}% confidence)`,
             nextMonthEstimation: predData.prediction.rekomendasi || "Belum ada rekomendasi untuk saat ini.",
             label: predData.prediction.label,
+            predIncome,
+            predExpense,
+            forecastRecommendation,
+            forecastAnalysis,
           });
+        } else {
+          setPrediction(prev => ({ ...prev, predIncome, predExpense, forecastRecommendation, forecastAnalysis }));
         }
 
         // CHART DATA (MONTHLY)
@@ -260,16 +278,19 @@ const Prediksi = () => {
                          style={{ backgroundColor: predStyle.bg, color: predStyle.accent, border: `1px solid ${predStyle.border}` }}>
                       {predStyle.icon}
                     </div>
-                    <h5 className="fw-bold mb-0 text-dark">Status Keuangan</h5>
+                    <h5 className="fw-bold mb-0 text-dark">Pemasukan anda bulan depan diprediksi sekitar</h5>
                   </div>
                   <span className="badge px-3 py-2" style={{ backgroundColor: predStyle.border, color: "white", borderRadius: "8px" }}>
                     {predStyle.status}
                   </span>
                 </div>
                 <div className="p-3 rounded-3" style={{ backgroundColor: `${predStyle.bg}88`, borderLeft: `4px solid ${predStyle.border}` }}>
-                  <p className="mb-0 fw-semibold text-dark" style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
-                    {prediction.analysis || "Belum ada analisis data yang tersedia untuk saat ini."}
-                  </p>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <span className="text-muted small fw-bold text-uppercase">Prediksi Pemasukan Bulan Depan</span>
+                    <span className="fw-bold text-success" style={{ fontSize: "1.2rem" }}>
+                      Rp {prediction.predIncome.toLocaleString("id-ID")}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -285,14 +306,52 @@ const Prediksi = () => {
                        style={{ backgroundColor: "#E7F1FF", color: "#0D6EFD", border: "1px solid #0D6EFD" }}>
                     <BsLightbulbFill size={24} />
                   </div>
-                  <h5 className="fw-bold mb-0 text-dark">Rekomendasi dan Tips</h5>
+                  <h5 className="fw-bold mb-0 text-dark">Pengeluaran anda bulan depan diprediksi sekitar</h5>
                 </div>
                 <div className="p-3 rounded-3" style={{ backgroundColor: "#F0F7FF", borderLeft: "4px solid #0D6EFD" }}>
-                  <p className="mb-0 fw-semibold text-dark" style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
-                    {prediction.nextMonthEstimation || "Terus pantau pengeluaran Anda untuk mendapatkan rekomendasi yang lebih akurat."}
-                  </p>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <span className="text-muted small fw-bold text-uppercase">Prediksi Pengeluaran Bulan Depan</span>
+                    <span className="fw-bold text-danger" style={{ fontSize: "1.2rem" }}>
+                      Rp {prediction.predExpense.toLocaleString("id-ID")}
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FORECAST ANALYSIS & RECOMMENDATION SECTION */}
+        <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
+          <div className="d-flex align-items-center mb-4">
+            <div className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center" 
+                 style={{ backgroundColor: "#E7F1FF", color: "#0D6EFD", border: "1px solid #0D6EFD" }}>
+              <BsGraphUp size={22} />
+            </div>
+            <h5 className="fw-bold mb-0 text-dark">Analisis & Rekomendasi Forecast</h5>
+          </div>
+          
+          <div className="px-2">
+            <div className="mb-4">
+              <h6 className="fw-bold text-primary text-uppercase small mb-2 d-flex align-items-center">
+                <span className="badge bg-primary me-2" style={{ width: "4px", height: "16px", padding: 0 }}> </span>
+                Insight AI
+              </h6>
+              <p className="text-dark fw-semibold" style={{ fontSize: "1.05rem", lineHeight: "1.7", whiteSpace: "pre-wrap" }}>
+                {prediction.forecastAnalysis || "Menghitung analisis forecast..."}
+              </p>
+            </div>
+
+            <hr style={{ opacity: 0.1, margin: "1.5rem 0" }} />
+
+            <div>
+              <h6 className="fw-bold text-success text-uppercase small mb-2 d-flex align-items-center">
+                <span className="badge bg-success me-2" style={{ width: "4px", height: "16px", padding: 0 }}> </span>
+                Saran Tindakan
+              </h6>
+              <p className="mb-0 text-dark fw-semibold" style={{ fontSize: "1.05rem", lineHeight: "1.7", whiteSpace: "pre-wrap" }}>
+                {prediction.forecastRecommendation || "Menyiapkan rekomendasi forecast..."}
+              </p>
             </div>
           </div>
         </div>

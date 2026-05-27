@@ -204,9 +204,7 @@ const Dashboard = () => {
 
         if (predData?.prediction?.label) {
           setPrediction({
-            analysis: `Kondisi keuangan kamu ${predData.prediction.label} (${(
-              predData.prediction.confidence * 100
-            ).toFixed(1)}% confidence)`,
+            analysis: `Kondisi keuangan kamu ${predData.prediction.label}`,
             nextMonthEstimation: predData.prediction.rekomendasi || "Belum ada rekomendasi untuk saat ini.",
             label: predData.prediction.label,
           });

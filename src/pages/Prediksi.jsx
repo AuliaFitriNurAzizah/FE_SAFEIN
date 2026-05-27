@@ -361,9 +361,9 @@ const Prediksi = () => {
             },
             // ── Garis Prediksi Pemasukan (putus-putus) ──
             {
-              label: "Prediksi Pemasukan",
+              label: "Prediksi Pemasukan (Biru)",
               data: incomePredData,
-              borderColor: "#28A745",
+              borderColor: "#0D6EFD",
               backgroundColor: "transparent",
               fill: false,
               tension: 0,
@@ -380,14 +380,14 @@ const Prediksi = () => {
                   : "circle";
               },
               pointBackgroundColor: "#fff",
-              pointBorderColor: "#28A745",
+              pointBorderColor: "#0D6EFD",
               pointBorderWidth: 2,
             },
             // ── Garis Prediksi Pengeluaran (putus-putus) ──
             {
-              label: "Prediksi Pengeluaran",
+              label: "Prediksi Pengeluaran (Ungu)",
               data: expensePredData,
-              borderColor: "#DC3545",
+              borderColor: "#AF52DE",
               backgroundColor: "transparent",
               fill: false,
               tension: 0,
@@ -403,7 +403,7 @@ const Prediksi = () => {
                   : "circle";
               },
               pointBackgroundColor: "#fff",
-              pointBorderColor: "#DC3545",
+              pointBorderColor: "#AF52DE",
               pointBorderWidth: 2,
             },
           ],
@@ -836,12 +836,25 @@ const Prediksi = () => {
                 <svg width="24" height="10">
                   <line
                     x1="0" y1="5" x2="24" y2="5"
-                    stroke="#6C757D"
+                    stroke="#0D6EFD"
                     strokeWidth="2"
                     strokeDasharray="5,3"
                   />
                 </svg>
-                = Prediksi bulan depan
+                = Prediksi Pemasukan (Biru)
+              </span>
+              <span
+                className="small text-muted d-flex align-items-center gap-1"
+              >
+                <svg width="24" height="10">
+                  <line
+                    x1="0" y1="5" x2="24" y2="5"
+                    stroke="#AF52DE"
+                    strokeWidth="2"
+                    strokeDasharray="5,3"
+                  />
+                </svg>
+                = Prediksi Pengeluaran (Ungu)
               </span>
               <span className="small text-muted">★ = Titik prediksi</span>
             </div>

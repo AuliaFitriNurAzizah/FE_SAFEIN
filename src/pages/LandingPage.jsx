@@ -248,15 +248,15 @@ function LandingPage() {
         <div className="container py-5">
           <div className="row align-items-center g-5">
             <div className="col-lg-6">
-              <h2 className="display-5 fw-bold text-safein-navy mb-4">Financial Simulation</h2>
+              <h2 className="display-5 fw-bold text-safein-navy mb-4">Simulasi Finansial</h2>
               <p className="lead text-muted mb-4">
-                Want to know your financial condition? Enter your income and expense below for a quick AI-powered analysis.
+                Ingin mengetahui kondisi keuangan Anda? Masukkan pendapatan dan pengeluaran Anda di bawah ini untuk analisis cepat berbasis AI.
               </p>
               <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
                 <div className="card-body p-4 p-md-5">
                   <form onSubmit={handleSimulate}>
                     <div className="mb-4">
-                      <label className="form-label fw-bold text-safein-navy">Monthly Income (Rp)</label>
+                      <label className="form-label fw-bold text-safein-navy">Pendapatan Bulanan</label>
                       <div className="input-group">
                         <span className="input-group-text bg-light border-0">Rp</span>
                         <input
@@ -270,7 +270,7 @@ function LandingPage() {
                       </div>
                     </div>
                     <div className="mb-4">
-                      <label className="form-label fw-bold text-safein-navy">Monthly Expense (Rp)</label>
+                      <label className="form-label fw-bold text-safein-navy">Pengeluaran Bulanan</label>
                       <div className="input-group">
                         <span className="input-group-text bg-light border-0">Rp</span>
                         <input
@@ -293,7 +293,7 @@ function LandingPage() {
                           <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                           Processing...
                         </>
-                      ) : "Analyze My Finance"}
+                      ) : "Analisis Keuangan Saya"}
                     </button>
                   </form>
                 </div>
@@ -317,7 +317,7 @@ function LandingPage() {
                           : "bi-exclamation-triangle-fill"
                         }`}></i>
                       </div>
-                      <h3 className="fw-bold text-safein-navy">Simulation Result</h3>
+                      <h3 className="fw-bold text-safein-navy">Hasil Simulasi</h3>
                     </div>
 
                     <div className="p-4 rounded-4 bg-light mb-4 border-start border-4 border-safein-blue">
@@ -347,10 +347,10 @@ function LandingPage() {
                         }}
                         className="btn btn-safein rounded-pill py-3 fw-bold"
                       >
-                        Try Again
+                        Coba Lagi
                       </button>
                       <Link to="/register" className="btn btn-outline-secondary rounded-pill py-2 small fw-semibold text-decoration-none">
-                        Get Full Analysis
+                        Dapatkan Analisis Lengkap
                       </Link>
                     </div>
                   </div>
@@ -358,8 +358,8 @@ function LandingPage() {
               ) : (
                 <div className="text-center p-5 border-2 border-dashed rounded-5 border-secondary border-opacity-25 h-100 d-flex flex-column justify-content-center">
                   <i className="bi bi-calculator display-1 text-muted opacity-25 mb-4"></i>
-                  <h4 className="text-muted fw-bold">No Data Yet</h4>
-                  <p className="text-muted">Fill the form to see your financial health analysis.</p>
+                  <h4 className="text-muted fw-bold">Belum ada data</h4>
+                  <p className="text-muted">Isi formulir untuk melihat analisis kesehatan keuangan Anda.</p>
                 </div>
               )}
             </div>

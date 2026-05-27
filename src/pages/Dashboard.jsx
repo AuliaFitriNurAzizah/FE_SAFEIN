@@ -459,6 +459,9 @@ const Dashboard = () => {
             <h3 className="fw-bold mb-0 text-dark">
               Rp {summary.income.toLocaleString("id-ID")}
             </h3>
+            <span className="text-muted small fw-semibold">
+              Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
+            </span>
           </div>
         </div>
       </div>
@@ -503,9 +506,6 @@ const Dashboard = () => {
         <div>
           <h6 className="fw-bold small mb-1 text-uppercase text-muted">Rasio Tabungan</h6>
           <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
-          <span className="text-muted small fw-semibold">
-            Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
-          </span>
         </div>
       </div>
     </div>

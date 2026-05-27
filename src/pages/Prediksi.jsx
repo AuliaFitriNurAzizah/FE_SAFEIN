@@ -134,8 +134,10 @@ const Prediksi = () => {
         // =========================
         // MONTHLY DATA
         // =========================
-        const incomeTransactions = incomeTransRes.data?.data || incomeTransRes.data || [];
-        const expenseTransactions = expenseTransRes.data?.data || expenseTransRes.data || [];
+        const incomeTransactions =
+          incomeTransRes.data?.data || incomeTransRes.data || [];
+        const expenseTransactions =
+          expenseTransRes.data?.data || expenseTransRes.data || [];
         const summaryData = summaryRes?.data?.data || {};
 
         const monthlyMap = {};
@@ -143,7 +145,9 @@ const Prediksi = () => {
         incomeTransactions.forEach((t) => {
           const date = new Date(t.date || t.created_at || t.createdAt);
           if (isNaN(date)) return;
-          const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+          const key = `${date.getFullYear()}-${String(
+            date.getMonth() + 1
+          ).padStart(2, "0")}`;
           if (!monthlyMap[key]) monthlyMap[key] = { income: 0, expense: 0 };
           monthlyMap[key].income += Number(t.amount) || 0;
         });
@@ -151,7 +155,9 @@ const Prediksi = () => {
         expenseTransactions.forEach((t) => {
           const date = new Date(t.date || t.created_at || t.createdAt);
           if (isNaN(date)) return;
-          const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+          const key = `${date.getFullYear()}-${String(
+            date.getMonth() + 1
+          ).padStart(2, "0")}`;
           if (!monthlyMap[key]) monthlyMap[key] = { income: 0, expense: 0 };
           monthlyMap[key].expense += Number(t.amount) || 0;
         });
@@ -176,7 +182,9 @@ const Prediksi = () => {
           if (val.match(/^\d{4}-\d{2}$/)) {
             const [y, m] = val.split("-");
             const d = new Date(y, parseInt(m) - 1);
-            currentMonthName = d.toLocaleDateString("id-ID", { month: "long" });
+            currentMonthName = d.toLocaleDateString("id-ID", {
+              month: "long",
+            });
           } else {
             currentMonthName = val || "Bulan Ini";
           }
@@ -185,7 +193,10 @@ const Prediksi = () => {
         const totalIncome = summaryData.totalIncome || 0;
         const totalExpense = summaryData.totalExpense || 0;
         const savedAmount = totalIncome - totalExpense;
-        const ratio = totalIncome > 0 ? Math.round((savedAmount / totalIncome) * 100) : 0;
+        const ratio =
+          totalIncome > 0
+            ? Math.round((savedAmount / totalIncome) * 100)
+            : 0;
 
         setSummary({
           income: totalIncome,
@@ -200,20 +211,17 @@ const Prediksi = () => {
         // =========================
         // FORECAST DATA
         // =========================
+        console.log(
+          "FORECAST RAW RESPONSE:",
+          JSON.stringify(forecastRes?.data, null, 2)
+        );
 
-        // Debug: lihat struktur response di DevTools Console
-        console.log("FORECAST RAW RESPONSE:", JSON.stringify(forecastRes?.data, null, 2));
-
-        // Coba kedua kemungkinan struktur: .data.data atau .data langsung
         const forecastData =
-          forecastRes?.data?.data ||
-          forecastRes?.data ||
-          {};
+          forecastRes?.data?.data || forecastRes?.data || {};
 
         const predIncome = Number(forecastData?.pred_income) || 0;
         const predExpense = Number(forecastData?.pred_expense) || 0;
 
-        // Ambil rekomendasi AI dengan fallback ke semua kemungkinan nama field
         const forecastRecommendation = (
           forecastData?.recommendation ||
           forecastData?.rekomendasi ||
@@ -225,7 +233,9 @@ const Prediksi = () => {
           forecastRes?.data?.rekomendasi ||
           forecastRes?.data?.message ||
           ""
-        )?.toString()?.trim() || "Belum ada rekomendasi AI";
+        )
+          ?.toString()
+          ?.trim() || "Belum ada rekomendasi AI";
 
         // =========================
         // PREDICTION DATA
@@ -254,24 +264,79 @@ const Prediksi = () => {
         // =========================
         // CHART DATA
         // =========================
-        setChartData({
-          labels: monthlyArray.map((item) => {
-            const val = item.month || "";
-            if (val.match(/^\d{4}-\d{2}$/)) {
-              const [y, m] = val.split("-");
-              const d = new Date(y, parseInt(m) - 1);
-              return d.toLocaleDateString("id-ID", {
-                month: "short",
-                year: "2-digit",
-              });
-            }
-            return val;
-          }),
 
+        // Helper: format label bulan dari key "YYYY-MM"
+        const formatMonthLabel = (val) => {
+          if (val && val.match(/^\d{4}-\d{2}$/)) {
+            const [y, m] = val.split("-");
+            const d = new Date(parseInt(y), parseInt(m) - 1);
+            return d.toLocaleDateString("id-ID", {
+              month: "short",
+              year: "2-digit",
+            });
+          }
+          return val || "";
+        };
+
+        // Label bulan depan (prediksi)
+        let nextMonthLabel = "Prediksi";
+        if (sortedKeys.length > 0) {
+          const lastKey = sortedKeys[sortedKeys.length - 1];
+          const [y, m] = lastKey.split("-");
+          // new Date(year, month) → month adalah 0-index, jadi parseInt(m) sudah = bulan depan
+          const nextDate = new Date(parseInt(y), parseInt(m));
+          nextMonthLabel =
+            nextDate.toLocaleDateString("id-ID", {
+              month: "short",
+              year: "2-digit",
+            }) + " ★";
+        }
+
+        // Gabungkan label aktual + label bulan prediksi
+        const chartLabels = [
+          ...monthlyArray.map((item) => formatMonthLabel(item.month)),
+          nextMonthLabel,
+        ];
+
+        // Data aktual: nilai normal + null di slot prediksi
+        const incomeActualData = [
+          ...monthlyArray.map((item) => item.income),
+          null,
+        ];
+        const expenseActualData = [
+          ...monthlyArray.map((item) => item.expense),
+          null,
+        ];
+
+        // Data garis prediksi: null sampai titik terakhir aktual, lalu sambung ke nilai prediksi
+        // Ini membuat garis prediksi "menyambung" dari titik terakhir aktual
+        const lastIncome =
+          monthlyArray.length > 0
+            ? monthlyArray[monthlyArray.length - 1].income
+            : null;
+        const lastExpense =
+          monthlyArray.length > 0
+            ? monthlyArray[monthlyArray.length - 1].expense
+            : null;
+
+        const incomePredData = [
+          ...Array(Math.max(monthlyArray.length - 1, 0)).fill(null),
+          lastIncome,   // titik sambung dari data terakhir aktual
+          predIncome,   // titik prediksi bulan depan
+        ];
+        const expensePredData = [
+          ...Array(Math.max(monthlyArray.length - 1, 0)).fill(null),
+          lastExpense,  // titik sambung dari data terakhir aktual
+          predExpense,  // titik prediksi bulan depan
+        ];
+
+        setChartData({
+          labels: chartLabels,
           datasets: [
+            // ── Garis Aktual Pemasukan ──
             {
               label: "Pemasukan",
-              data: monthlyArray.map((item) => item.income),
+              data: incomeActualData,
               borderColor: "#28A745",
               backgroundColor: "rgba(40, 167, 69, 0.1)",
               fill: true,
@@ -279,10 +344,12 @@ const Prediksi = () => {
               pointRadius: 4,
               pointBackgroundColor: "#28A745",
               borderWidth: 3,
+              spanGaps: false,
             },
+            // ── Garis Aktual Pengeluaran ──
             {
               label: "Pengeluaran",
-              data: monthlyArray.map((item) => item.expense),
+              data: expenseActualData,
               borderColor: "#DC3545",
               backgroundColor: "rgba(220, 53, 69, 0.1)",
               fill: true,
@@ -290,6 +357,54 @@ const Prediksi = () => {
               pointRadius: 4,
               pointBackgroundColor: "#DC3545",
               borderWidth: 3,
+              spanGaps: false,
+            },
+            // ── Garis Prediksi Pemasukan (putus-putus) ──
+            {
+              label: "Prediksi Pemasukan",
+              data: incomePredData,
+              borderColor: "#28A745",
+              backgroundColor: "transparent",
+              fill: false,
+              tension: 0,
+              borderDash: [7, 4],
+              borderWidth: 2,
+              spanGaps: true,
+              pointRadius: (ctx) => {
+                // Hanya tampilkan titik di posisi terakhir (titik prediksi)
+                return ctx.dataIndex === incomePredData.length - 1 ? 8 : 0;
+              },
+              pointStyle: (ctx) => {
+                return ctx.dataIndex === incomePredData.length - 1
+                  ? "star"
+                  : "circle";
+              },
+              pointBackgroundColor: "#fff",
+              pointBorderColor: "#28A745",
+              pointBorderWidth: 2,
+            },
+            // ── Garis Prediksi Pengeluaran (putus-putus) ──
+            {
+              label: "Prediksi Pengeluaran",
+              data: expensePredData,
+              borderColor: "#DC3545",
+              backgroundColor: "transparent",
+              fill: false,
+              tension: 0,
+              borderDash: [7, 4],
+              borderWidth: 2,
+              spanGaps: true,
+              pointRadius: (ctx) => {
+                return ctx.dataIndex === expensePredData.length - 1 ? 8 : 0;
+              },
+              pointStyle: (ctx) => {
+                return ctx.dataIndex === expensePredData.length - 1
+                  ? "star"
+                  : "circle";
+              },
+              pointBackgroundColor: "#fff",
+              pointBorderColor: "#DC3545",
+              pointBorderWidth: 2,
             },
           ],
         });
@@ -318,15 +433,40 @@ const Prediksi = () => {
         position: "top",
         labels: {
           usePointStyle: true,
+          // Bedakan style legend prediksi vs aktual
+          generateLabels: (chart) => {
+            const datasets = chart.data.datasets;
+            return datasets.map((ds, i) => ({
+              text: ds.label,
+              fillStyle: ds.borderColor,
+              strokeStyle: ds.borderColor,
+              lineWidth: 2,
+              lineDash: ds.borderDash || [],
+              hidden: !chart.isDatasetVisible(i),
+              datasetIndex: i,
+              pointStyle: ds.label.includes("Prediksi") ? "star" : "circle",
+            }));
+          },
         },
       },
       tooltip: {
         mode: "index",
         intersect: false,
         callbacks: {
-          label: (context) =>
-            `${context.dataset.label}: Rp ${context.raw.toLocaleString("id-ID")}`,
+          label: (context) => {
+            const raw = context.raw;
+            if (raw === null || raw === undefined) return null;
+            return `${context.dataset.label}: Rp ${raw.toLocaleString("id-ID")}`;
+          },
+          title: (items) => {
+            if (!items.length) return "";
+            const label = items[0].label || "";
+            return label.includes("★")
+              ? `${label} (Prediksi)`
+              : label;
+          },
         },
+        filter: (item) => item.raw !== null && item.raw !== undefined,
       },
     },
     scales: {
@@ -339,6 +479,20 @@ const Prediksi = () => {
       x: {
         grid: {
           display: false,
+        },
+        ticks: {
+          // Beri warna berbeda untuk label prediksi
+          color: (ctx) => {
+            const label = ctx.chart.data.labels?.[ctx.index] || "";
+            return label.includes("★") ? "#6C757D" : "#666";
+          },
+          font: (ctx) => {
+            const label = ctx.chart.data.labels?.[ctx.index] || "";
+            return {
+              weight: label.includes("★") ? "bold" : "normal",
+              size: 12,
+            };
+          },
         },
       },
     },
@@ -411,7 +565,9 @@ const Prediksi = () => {
         {/* HEADER */}
         <div className="d-flex align-items-center mb-4">
           <FaChartBar className="text-primary me-3" size={30} />
-          <h2 className="fw-bold mb-0 text-dark">Analisis & Prediksi Keuangan</h2>
+          <h2 className="fw-bold mb-0 text-dark">
+            Analisis & Prediksi Keuangan
+          </h2>
         </div>
 
         {/* INFO */}
@@ -419,9 +575,13 @@ const Prediksi = () => {
           className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-start"
           style={{ borderRadius: "12px", backgroundColor: "#E7F1FF" }}
         >
-          <BsLightbulbFill className="text-primary me-3 flex-shrink-0 mt-1" size={20} />
+          <BsLightbulbFill
+            className="text-primary me-3 flex-shrink-0 mt-1"
+            size={20}
+          />
           <span className="fw-semibold text-dark">
-            Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan untuk mendapatkan hasil prediksi yang lebih akurat.
+            Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan
+            untuk mendapatkan hasil prediksi yang lebih akurat.
           </span>
         </div>
 
@@ -430,13 +590,23 @@ const Prediksi = () => {
           <div className="col-sm-6 col-md-4">
             <div
               className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-              style={{ borderLeft: "10px solid #28A745", borderRadius: "10px" }}
+              style={{
+                borderLeft: "10px solid #28A745",
+                borderRadius: "10px",
+              }}
             >
               <div className="card-body d-flex align-items-center">
-                <FaMoneyBillWave className="me-3 me-md-4 text-success" size={35} />
+                <FaMoneyBillWave
+                  className="me-3 me-md-4 text-success"
+                  size={35}
+                />
                 <div>
-                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">Total Pendapatan</h6>
-                  <h3 className="fw-bold mb-0 text-dark">Rp {summary.income.toLocaleString("id-ID")}</h3>
+                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                    Total Pendapatan
+                  </h6>
+                  <h3 className="fw-bold mb-0 text-dark">
+                    Rp {summary.income.toLocaleString("id-ID")}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -444,13 +614,23 @@ const Prediksi = () => {
           <div className="col-sm-6 col-md-4">
             <div
               className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-              style={{ borderLeft: "10px solid #DC3545", borderRadius: "10px" }}
+              style={{
+                borderLeft: "10px solid #DC3545",
+                borderRadius: "10px",
+              }}
             >
               <div className="card-body d-flex align-items-center">
-                <BsFillBagCheckFill className="me-3 me-md-4 text-danger" size={35} />
+                <BsFillBagCheckFill
+                  className="me-3 me-md-4 text-danger"
+                  size={35}
+                />
                 <div>
-                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">Total Pengeluaran</h6>
-                  <h3 className="fw-bold mb-0 text-dark">Rp {summary.expense.toLocaleString("id-ID")}</h3>
+                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                    Total Pengeluaran
+                  </h6>
+                  <h3 className="fw-bold mb-0 text-dark">
+                    Rp {summary.expense.toLocaleString("id-ID")}
+                  </h3>
                 </div>
               </div>
             </div>
@@ -458,12 +638,21 @@ const Prediksi = () => {
           <div className="col-sm-12 col-md-4">
             <div
               className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-              style={{ borderLeft: "10px solid #AF52DE", borderRadius: "10px" }}
+              style={{
+                borderLeft: "10px solid #AF52DE",
+                borderRadius: "10px",
+              }}
             >
               <div className="card-body d-flex align-items-center">
-                <MdSavings className="me-3 me-md-4" size={40} style={{ color: "#AF52DE" }} />
+                <MdSavings
+                  className="me-3 me-md-4"
+                  size={40}
+                  style={{ color: "#AF52DE" }}
+                />
                 <div>
-                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">Rasio Tabungan</h6>
+                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                    Rasio Tabungan
+                  </h6>
                   <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
                   <span className="text-muted small fw-semibold">
                     Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
@@ -477,41 +666,107 @@ const Prediksi = () => {
         {/* PREDICTION CARDS */}
         <div className="row row-cols-1 row-cols-md-2 g-4">
           <div className="col mb-4">
-            <div className="card border-0 shadow-sm h-100 overflow-hidden" style={{ borderRadius: "16px", background: "white" }}>
-              <div style={{ height: "8px", backgroundColor: predStyle.border }}></div>
+            <div
+              className="card border-0 shadow-sm h-100 overflow-hidden"
+              style={{ borderRadius: "16px", background: "white" }}
+            >
+              <div
+                style={{
+                  height: "8px",
+                  backgroundColor: predStyle.border,
+                }}
+              ></div>
               <div className="card-body p-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <div className="d-flex align-items-center">
-                    <div className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center" style={{ backgroundColor: predStyle.bg, color: predStyle.accent, border: `1px solid ${predStyle.border}` }}>
+                    <div
+                      className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                      style={{
+                        backgroundColor: predStyle.bg,
+                        color: predStyle.accent,
+                        border: `1px solid ${predStyle.border}`,
+                      }}
+                    >
                       {predStyle.icon}
                     </div>
-                    <h5 className="fw-bold mb-0 text-dark">Prediksi Pemasukan</h5>
+                    <h5 className="fw-bold mb-0 text-dark">
+                      Prediksi Pemasukan
+                    </h5>
                   </div>
-                  <span className="badge px-3 py-2" style={{ backgroundColor: predStyle.border, color: "white", borderRadius: "8px" }}>{predStyle.status}</span>
+                  <span
+                    className="badge px-3 py-2"
+                    style={{
+                      backgroundColor: predStyle.border,
+                      color: "white",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    {predStyle.status}
+                  </span>
                 </div>
-                <div className="p-3 rounded-3" style={{ backgroundColor: `${predStyle.bg}88`, borderLeft: `4px solid ${predStyle.border}` }}>
+                <div
+                  className="p-3 rounded-3"
+                  style={{
+                    backgroundColor: `${predStyle.bg}88`,
+                    borderLeft: `4px solid ${predStyle.border}`,
+                  }}
+                >
                   <div className="d-flex align-items-center justify-content-between">
-                    <span className="text-muted small fw-bold text-uppercase">Prediksi Bulan Depan</span>
-                    <span className="fw-bold text-success" style={{ fontSize: "1.2rem" }}>Rp {prediction.predIncome.toLocaleString("id-ID")}</span>
+                    <span className="text-muted small fw-bold text-uppercase">
+                      Prediksi Bulan Depan
+                    </span>
+                    <span
+                      className="fw-bold text-success"
+                      style={{ fontSize: "1.2rem" }}
+                    >
+                      Rp {prediction.predIncome.toLocaleString("id-ID")}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div className="col mb-4">
-            <div className="card border-0 shadow-sm h-100 overflow-hidden" style={{ borderRadius: "16px", background: "white" }}>
-              <div style={{ height: "8px", backgroundColor: "#0D6EFD" }}></div>
+            <div
+              className="card border-0 shadow-sm h-100 overflow-hidden"
+              style={{ borderRadius: "16px", background: "white" }}
+            >
+              <div
+                style={{ height: "8px", backgroundColor: "#0D6EFD" }}
+              ></div>
               <div className="card-body p-4">
                 <div className="d-flex align-items-center mb-4">
-                  <div className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center" style={{ backgroundColor: "#E7F1FF", color: "#0D6EFD", border: "1px solid #0D6EFD" }}>
+                  <div
+                    className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                    style={{
+                      backgroundColor: "#E7F1FF",
+                      color: "#0D6EFD",
+                      border: "1px solid #0D6EFD",
+                    }}
+                  >
                     <BsLightbulbFill size={24} />
                   </div>
-                  <h5 className="fw-bold mb-0 text-dark">Prediksi Pengeluaran</h5>
+                  <h5 className="fw-bold mb-0 text-dark">
+                    Prediksi Pengeluaran
+                  </h5>
                 </div>
-                <div className="p-3 rounded-3" style={{ backgroundColor: "#F0F7FF", borderLeft: "4px solid #0D6EFD" }}>
+                <div
+                  className="p-3 rounded-3"
+                  style={{
+                    backgroundColor: "#F0F7FF",
+                    borderLeft: "4px solid #0D6EFD",
+                  }}
+                >
                   <div className="d-flex align-items-center justify-content-between">
-                    <span className="text-muted small fw-bold text-uppercase">Prediksi Bulan Depan</span>
-                    <span className="fw-bold text-danger" style={{ fontSize: "1.2rem" }}>Rp {prediction.predExpense.toLocaleString("id-ID")}</span>
+                    <span className="text-muted small fw-bold text-uppercase">
+                      Prediksi Bulan Depan
+                    </span>
+                    <span
+                      className="fw-bold text-danger"
+                      style={{ fontSize: "1.2rem" }}
+                    >
+                      Rp {prediction.predExpense.toLocaleString("id-ID")}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -522,7 +777,14 @@ const Prediksi = () => {
         {/* FORECAST */}
         <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
           <div className="d-flex align-items-center mb-4">
-            <div className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center" style={{ backgroundColor: "#E7F1FF", color: "#0D6EFD", border: "1px solid #0D6EFD" }}>
+            <div
+              className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center"
+              style={{
+                backgroundColor: "#E7F1FF",
+                color: "#0D6EFD",
+                border: "1px solid #0D6EFD",
+              }}
+            >
               <BsGraphUp size={22} />
             </div>
             <h5 className="fw-bold mb-0 text-dark">Analisis Forecast</h5>
@@ -530,11 +792,29 @@ const Prediksi = () => {
           <div className="px-2">
             <div className="mb-0">
               <h6 className="fw-bold text-primary text-uppercase small mb-2 d-flex align-items-center">
-                <span className="badge bg-primary me-2" style={{ width: "4px", height: "16px", padding: 0 }}> </span>
+                <span
+                  className="badge bg-primary me-2"
+                  style={{ width: "4px", height: "16px", padding: 0 }}
+                >
+                  {" "}
+                </span>
                 Insight AI
               </h6>
-              <div className="p-3 rounded-3" style={{ backgroundColor: "#F0F7FF", borderLeft: "4px solid #0D6EFD" }}>
-                <p className="mb-0 text-dark fw-semibold" style={{ fontSize: "1.05rem", lineHeight: "1.7", whiteSpace: "pre-wrap" }}>
+              <div
+                className="p-3 rounded-3"
+                style={{
+                  backgroundColor: "#F0F7FF",
+                  borderLeft: "4px solid #0D6EFD",
+                }}
+              >
+                <p
+                  className="mb-0 text-dark fw-semibold"
+                  style={{
+                    fontSize: "1.05rem",
+                    lineHeight: "1.7",
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
                   {String(prediction.forecastRecommendation)}
                 </p>
               </div>
@@ -544,7 +824,28 @@ const Prediksi = () => {
 
         {/* CHART */}
         <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
-          <h5 className="fw-bold mb-4" style={{ color: "#003366" }}>Grafik Pemasukan vs Pengeluaran Per Bulan</h5>
+          <div className="d-flex align-items-center justify-content-between mb-4">
+            <h5 className="fw-bold mb-0" style={{ color: "#003366" }}>
+              Grafik Pemasukan vs Pengeluaran Per Bulan
+            </h5>
+            {/* Keterangan garis prediksi */}
+            <div className="d-flex align-items-center gap-3">
+              <span
+                className="small text-muted d-flex align-items-center gap-1"
+              >
+                <svg width="24" height="10">
+                  <line
+                    x1="0" y1="5" x2="24" y2="5"
+                    stroke="#6C757D"
+                    strokeWidth="2"
+                    strokeDasharray="5,3"
+                  />
+                </svg>
+                = Prediksi bulan depan
+              </span>
+              <span className="small text-muted">★ = Titik prediksi</span>
+            </div>
+          </div>
           <div style={{ height: "400px" }}>
             <Line options={chartOptions} data={chartData} />
           </div>

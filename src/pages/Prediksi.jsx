@@ -77,7 +77,6 @@ const Prediksi = () => {
     predIncome: 0,
     predExpense: 0,
     forecastRecommendation: "",
-    forecastAnalysis: "",
   });
 
   // =========================
@@ -133,13 +132,12 @@ const Prediksi = () => {
         });
 
         // =========================
-        // MONTHLY DATA (dari transaksi langsung, sama dengan halaman Pemasukan & Pengeluaran)
+        // MONTHLY DATA
         // =========================
         const incomeTransactions = incomeTransRes.data?.data || incomeTransRes.data || [];
         const expenseTransactions = expenseTransRes.data?.data || expenseTransRes.data || [];
         const summaryData = summaryRes?.data?.data || {};
 
-        // Rangkum per bulan dari data transaksi langsung
         const monthlyMap = {};
 
         incomeTransactions.forEach((t) => {
@@ -158,7 +156,6 @@ const Prediksi = () => {
           monthlyMap[key].expense += Number(t.amount) || 0;
         });
 
-        // Urutkan bulan secara kronologis
         const sortedKeys = Object.keys(monthlyMap).sort();
         const monthlyArray = sortedKeys.map((key) => ({
           month: key,
@@ -203,45 +200,32 @@ const Prediksi = () => {
         // =========================
         // FORECAST DATA
         // =========================
-        const forecastData = forecastRes?.data?.data || {};
+
+        // Debug: lihat struktur response di DevTools Console
+        console.log("FORECAST RAW RESPONSE:", JSON.stringify(forecastRes?.data, null, 2));
+
+        // Coba kedua kemungkinan struktur: .data.data atau .data langsung
+        const forecastData =
+          forecastRes?.data?.data ||
+          forecastRes?.data ||
+          {};
 
         const predIncome = Number(forecastData?.pred_income) || 0;
         const predExpense = Number(forecastData?.pred_expense) || 0;
 
-        const forecastRecommendation =
-          forecastData?.recommendation?.trim() ||
-          "Belum ada rekomendasi AI";
-
-        const buildForecastAnalysis = (fd) => {
-          if (!fd || !fd.status) return "Belum ada insight AI";
-
-          const statusLabel =
-            fd.status === "MEMBURUK"
-              ? "⚠️ Kondisi keuangan diprediksi MEMBURUK"
-              : fd.status === "MEMBAIK"
-              ? "✅ Kondisi keuangan diprediksi MEMBAIK"
-              : `📊 Status: ${fd.status}`;
-
-          const incomeChange = fd.income_change_pct != null
-            ? `${fd.income_change_pct > 0 ? "+" : ""}${fd.income_change_pct.toFixed(1)}%`
-            : null;
-
-          const expenseChange = fd.expense_change_pct != null
-            ? `${fd.expense_change_pct > 0 ? "+" : ""}${fd.expense_change_pct.toFixed(1)}%`
-            : null;
-
-          const lines = [statusLabel];
-
-          if (incomeChange || expenseChange) {
-            lines.push(
-              `Perubahan pemasukan: ${incomeChange ?? "-"} | Perubahan pengeluaran: ${expenseChange ?? "-"}`
-            );
-          }
-
-          return lines.join("\n");
-        };
-
-        const forecastAnalysis = buildForecastAnalysis(forecastData);
+        // Ambil rekomendasi AI dengan fallback ke semua kemungkinan nama field
+        const forecastRecommendation = (
+          forecastData?.recommendation ||
+          forecastData?.rekomendasi ||
+          forecastData?.insight ||
+          forecastData?.message ||
+          forecastData?.ai_recommendation ||
+          forecastData?.ai_insight ||
+          forecastRes?.data?.recommendation ||
+          forecastRes?.data?.rekomendasi ||
+          forecastRes?.data?.message ||
+          ""
+        )?.toString()?.trim() || "Belum ada rekomendasi AI";
 
         // =========================
         // PREDICTION DATA
@@ -265,7 +249,6 @@ const Prediksi = () => {
           predExpense,
 
           forecastRecommendation,
-          forecastAnalysis,
         });
 
         // =========================
@@ -274,7 +257,6 @@ const Prediksi = () => {
         setChartData({
           labels: monthlyArray.map((item) => {
             const val = item.month || "";
-
             if (val.match(/^\d{4}-\d{2}$/)) {
               const [y, m] = val.split("-");
               const d = new Date(y, parseInt(m) - 1);
@@ -565,7 +547,7 @@ const Prediksi = () => {
               </h6>
               <div className="p-3 rounded-3" style={{ backgroundColor: "#F0F7FF", borderLeft: "4px solid #0D6EFD" }}>
                 <p className="mb-0 text-dark fw-semibold" style={{ fontSize: "1.05rem", lineHeight: "1.7", whiteSpace: "pre-wrap" }}>
-                  {String(prediction.forecastAnalysis)}
+                  {String(prediction.forecastRecommendation)}
                 </p>
               </div>
             </div>

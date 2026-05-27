@@ -516,11 +516,11 @@ const Dashboard = () => {
       
 
       {/* PREDIKSI & ESTIMASI */}
-      <div className="row mb-4">
+      <div className="row row-cols-1 row-cols-lg-2 g-4 mb-4">
         {/* PREDIKSI */}
-        <div className="col-12 mb-3">
+        <div className="col">
           <div
-            className="card border-0 shadow-sm overflow-hidden position-relative"
+            className="card border-0 shadow-sm overflow-hidden position-relative h-100"
             style={{ borderRadius: "16px", background: "white" }}
           >
             <div 
@@ -572,9 +572,9 @@ const Dashboard = () => {
         </div>
 
         {/* ESTIMASI */}
-        <div className="col-12">
+        <div className="col">
           <div
-            className="card border-0 shadow-sm overflow-hidden position-relative"
+            className="card border-0 shadow-sm overflow-hidden position-relative h-100"
             style={{ borderRadius: "16px", background: "white" }}
           >
             <div 

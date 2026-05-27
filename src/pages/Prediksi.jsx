@@ -475,8 +475,8 @@ const Prediksi = () => {
         </div>
 
         {/* PREDICTION CARDS */}
-        <div className="row">
-          <div className="col-lg-6 mb-4">
+        <div className="row row-cols-1 row-cols-md-2 g-4">
+          <div className="col mb-4">
             <div className="card border-0 shadow-sm h-100 overflow-hidden" style={{ borderRadius: "16px", background: "white" }}>
               <div style={{ height: "8px", backgroundColor: predStyle.border }}></div>
               <div className="card-body p-4">
@@ -489,12 +489,6 @@ const Prediksi = () => {
                   </div>
                   <span className="badge px-3 py-2" style={{ backgroundColor: predStyle.border, color: "white", borderRadius: "8px" }}>{predStyle.status}</span>
                 </div>
-                <div className="p-3 rounded-3 mb-3" style={{ backgroundColor: "#F8F9FA", borderLeft: "4px solid #6C757D" }}>
-                  <div className="d-flex align-items-center justify-content-between">
-                    <span className="text-muted small fw-bold text-uppercase">Realisasi ({summary.currentMonthName})</span>
-                    <span className="fw-bold text-dark" style={{ fontSize: "1.1rem" }}>Rp {summary.actualIncome.toLocaleString("id-ID")}</span>
-                  </div>
-                </div>
                 <div className="p-3 rounded-3" style={{ backgroundColor: `${predStyle.bg}88`, borderLeft: `4px solid ${predStyle.border}` }}>
                   <div className="d-flex align-items-center justify-content-between">
                     <span className="text-muted small fw-bold text-uppercase">Prediksi Bulan Depan</span>
@@ -504,7 +498,7 @@ const Prediksi = () => {
               </div>
             </div>
           </div>
-          <div className="col-lg-6 mb-4">
+          <div className="col mb-4">
             <div className="card border-0 shadow-sm h-100 overflow-hidden" style={{ borderRadius: "16px", background: "white" }}>
               <div style={{ height: "8px", backgroundColor: "#0D6EFD" }}></div>
               <div className="card-body p-4">
@@ -513,12 +507,6 @@ const Prediksi = () => {
                     <BsLightbulbFill size={24} />
                   </div>
                   <h5 className="fw-bold mb-0 text-dark">Prediksi Pengeluaran</h5>
-                </div>
-                <div className="p-3 rounded-3 mb-3" style={{ backgroundColor: "#F8F9FA", borderLeft: "4px solid #6C757D" }}>
-                  <div className="d-flex align-items-center justify-content-between">
-                    <span className="text-muted small fw-bold text-uppercase">Realisasi ({summary.currentMonthName})</span>
-                    <span className="fw-bold text-dark" style={{ fontSize: "1.1rem" }}>Rp {summary.actualExpense.toLocaleString("id-ID")}</span>
-                  </div>
                 </div>
                 <div className="p-3 rounded-3" style={{ backgroundColor: "#F0F7FF", borderLeft: "4px solid #0D6EFD" }}>
                   <div className="d-flex align-items-center justify-content-between">

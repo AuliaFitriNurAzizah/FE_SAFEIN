@@ -1,8 +1,89 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import api from "../utils/api";
 
 function LandingPage() {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const [simulationData, setSimulationData] = useState({ income: "", expenses: "" });
+  const [simulationResult, setSimulationResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSimulate = async () => {
+    const income = Number(simulationData.income);
+    const expenses = Number(simulationData.expenses);
+
+    // Validasi frontend
+    if (!income || income <= 0) {
+      setSimulationResult({ status: "Validasi Gagal", message: "Pemasukan harus lebih dari 0.", isSuccess: false, isError: true });
+      return;
+    }
+    if (!expenses || expenses < 0) {
+      setSimulationResult({ status: "Validasi Gagal", message: "Pengeluaran tidak boleh negatif.", isSuccess: false, isError: true });
+      return;
+    }
+
+    setIsLoading(true);
+    setSimulationResult(null);
+    try {
+      const response = await api.post("/transactions/simulation", {
+        pemasukan: income,
+        pengeluaran: expenses,
+      });
+
+      console.log("SIMULATION RESPONSE:", JSON.stringify(response.data, null, 2));
+
+      // Baca dari semua kemungkinan struktur response
+      const raw = response.data;
+      const dataObj = raw?.data || raw || {};
+
+      const status =
+        dataObj?.status ||
+        dataObj?.label ||
+        dataObj?.kondisi ||
+        raw?.status ||
+        "Tidak diketahui";
+
+      const message =
+        dataObj?.message ||
+        dataObj?.rekomendasi ||
+        dataObj?.recommendation ||
+        dataObj?.pesan ||
+        raw?.message ||
+        "Tidak ada pesan dari server.";
+
+      const isSuccess =
+        status?.toLowerCase().includes("aman") ||
+        status?.toLowerCase().includes("sehat") ||
+        status?.toLowerCase().includes("baik") ||
+        status?.toLowerCase().includes("success");
+
+      setSimulationResult({ status, message, isSuccess, isError: false });
+    } catch (error) {
+      console.error("Simulation error:", error);
+
+      // Baca pesan error dari semua kemungkinan struktur
+      const errMsg =
+        error.response?.data?.data?.message ||
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Terjadi kesalahan saat melakukan simulasi.";
+
+      const errStatus =
+        error.response?.data?.data?.status ||
+        error.response?.data?.status ||
+        "Gagal";
+
+      setSimulationResult({
+        status: errStatus,
+        message: errMsg,
+        isSuccess: false,
+        isError: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-vh-100 hero-gradient position-relative">
@@ -32,40 +113,19 @@ function LandingPage() {
           <div className={`collapse navbar-collapse ${isNavExpanded ? "show" : ""}`} id="navbarNav">
             <ul className="navbar-nav ms-auto align-items-center py-3 py-lg-0">
               <li className="nav-item">
-                <a 
-                  href="#fitur" 
-                  className="nav-link fw-semibold px-3 text-safein-navy"
-                  onClick={() => setIsNavExpanded(false)}
-                >
-                  Fitur
-                </a>
+                <a href="#fitur" className="nav-link fw-semibold px-3 text-safein-navy" onClick={() => setIsNavExpanded(false)}>Fitur</a>
               </li>
               <li className="nav-item">
-                <a 
-                  href="#testimoni" 
-                  className="nav-link fw-semibold px-3 text-safein-navy"
-                  onClick={() => setIsNavExpanded(false)}
-                >
-                  Testimoni
-                </a>
+                <a href="#simulasi" className="nav-link fw-semibold px-3 text-safein-navy" onClick={() => setIsNavExpanded(false)}>Simulasi</a>
               </li>
               <li className="nav-item">
-                <Link 
-                  to="/login" 
-                  className="nav-link fw-semibold px-3 text-safein-navy"
-                  onClick={() => setIsNavExpanded(false)}
-                >
-                  Login
-                </Link>
+                <a href="#testimoni" className="nav-link fw-semibold px-3 text-safein-navy" onClick={() => setIsNavExpanded(false)}>Testimoni</a>
+              </li>
+              <li className="nav-item">
+                <Link to="/login" className="nav-link fw-semibold px-3 text-safein-navy" onClick={() => setIsNavExpanded(false)}>Login</Link>
               </li>
               <li className="nav-item ms-lg-2 mt-3 mt-lg-0">
-                <Link 
-                  to="/register" 
-                  className="btn btn-safein px-4 rounded-pill fw-bold pulse-button w-100"
-                  onClick={() => setIsNavExpanded(false)}
-                >
-                  Daftar Gratis
-                </Link>
+                <Link to="/register" className="btn btn-safein px-4 rounded-pill fw-bold pulse-button w-100" onClick={() => setIsNavExpanded(false)}>Daftar Gratis</Link>
               </li>
             </ul>
           </div>
@@ -148,9 +208,9 @@ function LandingPage() {
                   <div className="bg-white rounded-4 p-4 shadow-sm h-100 d-flex flex-column justify-content-center text-center">
                     <div className="bg-light rounded-pill mx-auto mb-4" style={{ width: "70%", height: "15px" }}></div>
                     <div className="position-relative mx-auto my-3" style={{ width: "120px", height: "120px" }}>
-                        <div className="position-absolute w-100 h-100 rounded-circle border border-5 border-light"></div>
-                        <div className="position-absolute w-100 h-100 rounded-circle border border-5 border-primary border-top-0 border-end-0"></div>
-                        <div className="position-absolute top-50 start-50 translate-middle fw-bold text-safein-navy fs-4">75%</div>
+                      <div className="position-absolute w-100 h-100 rounded-circle border border-5 border-light"></div>
+                      <div className="position-absolute w-100 h-100 rounded-circle border border-5 border-primary border-top-0 border-end-0"></div>
+                      <div className="position-absolute top-50 start-50 translate-middle fw-bold text-safein-navy fs-4">75%</div>
                     </div>
                     <div className="bg-safein-blue bg-opacity-10 text-safein-blue rounded-3 p-2 mt-4 small fw-bold">
                       Target Tercapai
@@ -188,7 +248,6 @@ function LandingPage() {
           <h2 className="display-5 fw-bold text-safein-navy mb-3">Fitur Cerdas untuk Anda</h2>
           <p className="text-muted mx-auto" style={{ maxWidth: "600px" }}>Masa depan manajemen finansial yang didukung oleh kecerdasan buatan.</p>
         </div>
-        
         <div className="row g-4">
           {[
             { icon: "bi-graph-up-arrow", title: "Analisis Real-time", desc: "Pantau arus kas Anda secara langsung dengan grafik interaktif yang mudah dipahami.", delay: "animate-delay-1" },
@@ -205,6 +264,152 @@ function LandingPage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Simulasi Section */}
+      <section id="simulasi" className="py-5 bg-light">
+        <div className="container py-5">
+          <div className="row align-items-center g-5">
+            <div className="col-lg-6">
+              <h2 className="display-5 fw-bold text-safein-navy mb-4">Coba Simulasi Keuangan</h2>
+              <p className="lead text-muted mb-4">
+                Ingin tahu bagaimana kondisi keuangan Anda? Masukkan angka pemasukan dan pengeluaran Anda di bawah ini untuk melihat analisis cepat kami.
+              </p>
+              <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div className="card-body p-4 p-md-5">
+                  <div>
+                    <div className="mb-4">
+                      <label className="form-label fw-bold text-safein-navy">Pemasukan Bulanan (Rp)</label>
+                      <div className="input-group">
+                        <span className="input-group-text bg-light border-0">Rp</span>
+                        <input
+                          type="number"
+                          className="form-control border-0 bg-light p-3"
+                          placeholder="Contoh: 5000000"
+                          value={simulationData.income}
+                          onChange={(e) => setSimulationData({ ...simulationData, income: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div className="mb-4">
+                      <label className="form-label fw-bold text-safein-navy">Pengeluaran Bulanan (Rp)</label>
+                      <div className="input-group">
+                        <span className="input-group-text bg-light border-0">Rp</span>
+                        <input
+                          type="number"
+                          className="form-control border-0 bg-light p-3"
+                          placeholder="Contoh: 3000000"
+                          value={simulationData.expenses}
+                          onChange={(e) => setSimulationData({ ...simulationData, expenses: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleSimulate}
+                      className="btn btn-safein w-100 py-3 rounded-pill fw-bold shadow-sm"
+                      disabled={isLoading || !simulationData.income || !simulationData.expenses}
+                    >
+                      {isLoading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Memproses...
+                        </>
+                      ) : "Lihat Hasil Simulasi"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Hasil Simulasi */}
+            <div className="col-lg-6">
+              {simulationResult ? (
+                <div className="animate-fade-in-up">
+                  <div className="card border-0 shadow-lg rounded-4 p-4 p-md-5 text-center bg-white">
+                    {/* Icon Status */}
+                    <div className={`display-1 mb-3 ${
+                      simulationResult.isError ? "text-danger"
+                      : simulationResult.isSuccess ? "text-success"
+                      : "text-warning"
+                    }`}>
+                      <i className={`bi ${
+                        simulationResult.isError ? "bi-x-circle-fill"
+                        : simulationResult.isSuccess ? "bi-check-circle-fill"
+                        : "bi-exclamation-triangle-fill"
+                      }`}></i>
+                    </div>
+
+                    {/* Badge Status */}
+                    <div className="mb-4">
+                      <span className={`badge rounded-pill px-4 py-2 fs-6 ${
+                        simulationResult.isError ? "bg-danger text-white"
+                        : simulationResult.isSuccess ? "bg-success text-white"
+                        : "bg-warning text-dark"
+                      }`}>
+                        {simulationResult.status}
+                      </span>
+                      <h3 className="fw-bold text-safein-navy mt-3 mb-0">
+                        {simulationResult.isError ? "Simulasi Gagal" : "Hasil Analisis Keuangan"}
+                      </h3>
+                    </div>
+
+                    {/* Ringkasan Input */}
+                    <div className="row g-2 mb-4">
+                      <div className="col-6">
+                        <div className="p-3 rounded-3 bg-light border-start border-4 border-success text-start">
+                          <div className="small text-muted fw-bold text-uppercase mb-1">Pemasukan</div>
+                          <div className="fw-bold text-success">
+                            Rp {Number(simulationData.income).toLocaleString("id-ID")}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="p-3 rounded-3 bg-light border-start border-4 border-danger text-start">
+                          <div className="small text-muted fw-bold text-uppercase mb-1">Pengeluaran</div>
+                          <div className="fw-bold text-danger">
+                            Rp {Number(simulationData.expenses).toLocaleString("id-ID")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pesan / Rekomendasi dari Backend */}
+                    <div className="p-4 rounded-4 bg-light mb-4 border-start border-4 border-safein-blue text-start">
+                      <div className="small fw-bold text-muted text-uppercase mb-2">
+                        <i className="bi bi-robot me-1"></i> Rekomendasi AI
+                      </div>
+                      <p className="mb-0 fw-medium text-safein-navy" style={{ fontSize: "1rem", lineHeight: "1.7" }}>
+                        {simulationResult.message}
+                      </p>
+                    </div>
+
+                    {/* Tombol Aksi */}
+                    <div className="d-grid gap-2">
+                      <button
+                        onClick={() => {
+                          setSimulationResult(null);
+                          setSimulationData({ income: "", expenses: "" });
+                        }}
+                        className="btn btn-safein rounded-pill py-3 fw-bold"
+                      >
+                        Coba Lagi
+                      </button>
+                      <Link to="/register" className="btn btn-outline-secondary rounded-pill py-2 small fw-semibold">
+                        Daftar untuk Analisis Lebih Dalam
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center p-5 border-2 border-dashed rounded-5 border-secondary border-opacity-25 h-100 d-flex flex-column justify-content-center">
+                  <i className="bi bi-calculator display-1 text-muted opacity-25 mb-4"></i>
+                  <h4 className="text-muted fw-bold">Belum Ada Data</h4>
+                  <p className="text-muted">Isi formulir di samping untuk mulai melihat analisis finansial cerdas Anda.</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -255,7 +460,6 @@ function LandingPage() {
               Daftar Sekarang — Gratis
             </Link>
           </div>
-          {/* Decorative elements */}
           <div className="position-absolute bg-white opacity-10 rounded-circle animate-float" style={{ width: '300px', height: '300px', top: '-150px', right: '-150px' }}></div>
           <div className="position-absolute bg-white opacity-10 rounded-circle animate-float-slow" style={{ width: '200px', height: '200px', bottom: '-100px', left: '-100px' }}></div>
         </div>

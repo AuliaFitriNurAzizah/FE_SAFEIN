@@ -416,10 +416,10 @@ const Prediksi = () => {
 
         {/* INFO */}
         <div
-          className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-center"
+          className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-start"
           style={{ borderRadius: "12px", backgroundColor: "#E7F1FF" }}
         >
-          <BsLightbulbFill className="text-primary me-3" size={20} />
+          <BsLightbulbFill className="text-primary me-3 flex-shrink-0 mt-1" size={20} />
           <span className="fw-semibold text-dark">
             Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan untuk mendapatkan hasil prediksi yang lebih akurat.
           </span>

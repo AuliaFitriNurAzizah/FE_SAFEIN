@@ -596,17 +596,13 @@ const Prediksi = () => {
               }}
             >
               <div className="card-body d-flex align-items-center">
-                <FaMoneyBillWave
-                  className="me-3 me-md-4 text-success"
-                  size={35}
-                />
+                <FaMoneyBillWave className="me-3 me-md-4 text-success" size={35} />
                 <div>
-                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
-                    Total Pendapatan
-                  </h6>
-                  <h3 className="fw-bold mb-0 text-dark">
-                    Rp {summary.income.toLocaleString("id-ID")}
-                  </h3>
+                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">Total Pendapatan</h6>
+                  <h3 className="fw-bold mb-0 text-dark">Rp {summary.income.toLocaleString("id-ID")}</h3>
+                  <span className="text-muted small fw-semibold">
+                    Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
+                  </span>
                 </div>
               </div>
             </div>
@@ -654,9 +650,6 @@ const Prediksi = () => {
                     Rasio Tabungan
                   </h6>
                   <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
-                  <span className="text-muted small fw-semibold">
-                    Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
-                  </span>
                 </div>
               </div>
             </div>

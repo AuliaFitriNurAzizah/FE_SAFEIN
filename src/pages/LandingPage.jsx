@@ -45,7 +45,17 @@ function LandingPage() {
         status?.toLowerCase().includes("baik") ||
         status?.toLowerCase().includes("success");
 
-      setSimulationResult({ status, message, isSuccess, isError: false });
+      const isDanger = 
+        status?.toLowerCase().includes("bahaya") ||
+        status?.toLowerCase().includes("buruk") ||
+        status?.toLowerCase().includes("kritis") ||
+        status?.toLowerCase().includes("boros") ||
+        status?.toLowerCase().includes("danger") ||
+        status?.toLowerCase().includes("unsafe") ||
+        message?.toLowerCase().includes("bahaya") ||
+        message?.toLowerCase().includes("overspending");
+
+      setSimulationResult({ status, message, isSuccess, isDanger, isError: false });
     } catch (error) {
       console.error("Simulation error:", error);
       const errMsg = error.response?.data?.message || error.message || "An error occurred during simulation.";
@@ -55,6 +65,7 @@ function LandingPage() {
         status: errStatus,
         message: errMsg,
         isSuccess: false,
+        isDanger: true,
         isError: true,
       });
     } finally {
@@ -307,12 +318,12 @@ function LandingPage() {
                   <div className="card border-0 shadow-lg rounded-4 p-4 p-md-5 bg-white">
                     <div className="text-center mb-4">
                       <div className={`display-1 mb-3 ${
-                        simulationResult.isError ? "text-danger"
+                        simulationResult.isDanger || simulationResult.isError ? "text-danger"
                         : simulationResult.isSuccess ? "text-success"
                         : "text-warning"
                       }`}>
                         <i className={`bi ${
-                          simulationResult.isError ? "bi-x-circle-fill"
+                          simulationResult.isDanger || simulationResult.isError ? "bi-exclamation-octagon-fill"
                           : simulationResult.isSuccess ? "bi-check-circle-fill"
                           : "bi-exclamation-triangle-fill"
                         }`}></i>
@@ -320,11 +331,15 @@ function LandingPage() {
                       <h3 className="fw-bold text-safein-navy">Hasil Simulasi</h3>
                     </div>
 
-                    <div className="p-4 rounded-4 bg-light mb-4 border-start border-4 border-safein-blue">
+                    <div className={`p-4 rounded-4 bg-light mb-4 border-start border-4 ${
+                      simulationResult.isDanger || simulationResult.isError ? "border-danger"
+                      : simulationResult.isSuccess ? "border-success"
+                      : "border-warning"
+                    }`}>
                       <div className="mb-3">
                         <div className="small fw-bold text-muted text-uppercase mb-1">Status</div>
                         <div className={`fs-5 fw-bold ${
-                          simulationResult.isError ? "text-danger"
+                          simulationResult.isDanger || simulationResult.isError ? "text-danger"
                           : simulationResult.isSuccess ? "text-success"
                           : "text-warning"
                         }`}>
@@ -333,7 +348,9 @@ function LandingPage() {
                       </div>
                       <div>
                         <div className="small fw-bold text-muted text-uppercase mb-1">Message</div>
-                        <p className="mb-0 fw-medium text-safein-navy" style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
+                        <p className={`mb-0 fw-medium ${
+                          simulationResult.isDanger || simulationResult.isError ? "text-danger" : "text-safein-navy"
+                        }`} style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
                           {simulationResult.message}
                         </p>
                       </div>

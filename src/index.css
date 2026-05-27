@@ -121,6 +121,13 @@ body {
 .text-safein-navy { color: var(--safein-navy) !important; }
 .text-safein-blue { color: var(--safein-blue) !important; }
 
+/* Force danger background for simulation result */
+.bg-danger-forced {
+  background-color: #f8d7da !important;
+  border-color: #dc3545 !important;
+}
+
+
 .btn-safein {
   background-color: var(--safein-navy);
   color: white;

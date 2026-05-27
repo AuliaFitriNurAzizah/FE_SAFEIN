@@ -53,7 +53,8 @@ function LandingPage() {
         status?.toLowerCase().includes("danger") ||
         status?.toLowerCase().includes("unsafe") ||
         message?.toLowerCase().includes("bahaya") ||
-        message?.toLowerCase().includes("overspending");
+        message?.toLowerCase().includes("overspending") ||
+        message?.toLowerCase().includes("melebihi");
 
       setSimulationResult({ status, message, isSuccess, isDanger, isError: false });
     } catch (error) {
@@ -331,10 +332,8 @@ function LandingPage() {
                       <h3 className="fw-bold text-safein-navy">Hasil Simulasi</h3>
                     </div>
 
-                    <div className={`p-4 rounded-4 bg-light mb-4 border-start border-4 ${
-                      simulationResult.isDanger || simulationResult.isError ? "border-danger"
-                      : simulationResult.isSuccess ? "border-success"
-                      : "border-warning"
+                    <div className={`p-4 rounded-4 mb-4 border-start border-4 ${
+                      (simulationResult.isDanger || simulationResult.isError) ? "bg-danger-forced" : "bg-light"
                     }`}>
                       <div className="mb-3">
                         <div className="small fw-bold text-muted text-uppercase mb-1">Status</div>

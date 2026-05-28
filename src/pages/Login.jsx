@@ -38,33 +38,33 @@ function Login() {
   };
 
   return (
-    <div className="container-fluid vh-100 p-0 overflow-hidden">
+    <div className="container-fluid vh-100 p-0 overflow-hidden shadow-sm">
       <div className="row g-0 h-100">
         {/* Form Section */}
-        <div className="col-lg-5 d-flex align-items-center justify-content-center bg-white p-4 p-md-5 animate-fade-in-up">
+        <div className="col-12 col-md-6 col-lg-5 col-xl-4 d-flex flex-column align-items-center justify-content-center bg-white p-4 p-lg-5 animate-fade-in-up">
           <div style={{ maxWidth: "400px", width: "100%" }}>
-            <div className="text-center text-lg-start mb-5">
-              <h2 className="fw-bold text-safein-navy mb-1 fs-1">SAFEIN</h2>
-              <p className="text-muted">Adaptive Financial Intelligence System</p>
+            <div className="text-center text-md-start mb-4">
+              <h2 className="fw-bold text-safein-navy mb-0 fs-2">SAFEIN</h2>
+              <p className="text-muted small">Adaptive Financial Intelligence System</p>
             </div>
 
-            <div className="mb-4">
-              <h4 className="fw-bold text-dark mb-2">Selamat Datang!</h4>
-              <p className="text-muted small">Silakan masuk ke akun Anda untuk melanjutkan.</p>
+            <div className="mb-3">
+              <h5 className="fw-bold text-dark mb-1">Selamat Datang!</h5>
+              <p className="text-muted smaller mb-0">Silakan masuk ke akun Anda.</p>
             </div>
 
             {error && (
-              <div className="alert alert-danger border-0 small py-3 rounded-4 mb-4 animate-fade-in-up">
+              <div className="alert alert-danger border-0 small py-2 px-3 rounded-3 mb-3 animate-fade-in-up">
                 <i className="bi bi-exclamation-circle-fill me-2"></i> {error}
               </div>
             )}
 
             <form onSubmit={handleLogin}>
-              <div className="mb-3">
-                <label className="form-label small fw-bold text-safein-navy">Alamat Email</label>
+              <div className="mb-2">
+                <label className="form-label smaller fw-bold text-safein-navy mb-1">Alamat Email</label>
                 <input
                   type="email"
-                  className="form-control auth-input rounded-4"
+                  className="form-control auth-input rounded-3 py-2"
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -72,22 +72,19 @@ function Login() {
                 />
               </div>
 
-              <div className="mb-4">
-                <div className="d-flex justify-content-between">
-                  <label className="form-label small fw-bold text-safein-navy">Password</label>
-                  {/* <a href="#" className="text-safein-blue small text-decoration-none fw-medium">Lupa Password?</a> */}
-                </div>
+              <div className="mb-3">
+                <label className="form-label smaller fw-bold text-safein-navy mb-1">Password</label>
                 <div className="input-group">
                   <input
                     type={showPassword ? "text" : "password"}
-                    className="form-control auth-input rounded-start-4 border-end-0"
+                    className="form-control auth-input rounded-start-3 border-end-0 py-2"
                     placeholder="Masukkan password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                   <span
-                    className="input-group-text bg-white border-start-0 rounded-end-4 px-3"
+                    className="input-group-text bg-white border-start-0 rounded-end-3 px-3 py-2"
                     style={{ cursor: "pointer", color: "#cbd5e0" }}
                     onClick={() => setShowPassword(!showPassword)}
                   >
@@ -97,40 +94,40 @@ function Login() {
               </div>
 
               <button
-                className="btn btn-safein w-100 py-3 rounded-4 fw-bold shadow-sm mb-4 pulse-button"
+                className="btn btn-safein w-100 py-2 rounded-3 fw-bold shadow-sm mb-3 pulse-button"
                 disabled={loading}
               >
                 {loading ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2"></span>
-                    Mohon Tunggu...
+                    ...
                   </>
                 ) : "Masuk Sekarang"}
               </button>
             </form>
 
-            <div className="text-center mt-5 p-4 rounded-4 bg-light mb-4">
-              <span className="text-muted small">Belum punya akun? </span>
-              <Link to="/register" className="text-safein-blue small text-decoration-none fw-bold">
+            <div className="text-center p-3 rounded-3 bg-light mb-3">
+              <span className="text-muted smaller">Belum punya akun? </span>
+              <Link to="/register" className="text-safein-blue smaller text-decoration-none fw-bold">
                 Daftar Gratis
               </Link>
             </div>
 
             <div className="text-center">
-              <Link to="/" className="text-muted small text-decoration-none hover-navy transition-all">
-                <i className="bi bi-arrow-left me-1"></i> Kembali ke Beranda
+              <Link to="/" className="text-muted smaller text-decoration-none hover-navy transition-all">
+                <i className="bi bi-arrow-left me-1"></i> Beranda
               </Link>
             </div>
           </div>
         </div>
 
         {/* Branding Section */}
-        <div className="col-lg-7 d-none d-lg-flex flex-column align-items-center justify-content-center branding-panel text-white p-5 overflow-hidden">
+        <div className="col-md-6 col-lg-7 col-xl-8 d-none d-md-flex flex-column align-items-center justify-content-center branding-panel text-white p-5">
           {/* Decorative Elements */}
-          <div className="branding-bg-shape animate-float" style={{ width: '500px', height: '500px', top: '-10%', right: '-10%' }}></div>
-          <div className="branding-bg-shape animate-float-slow" style={{ width: '300px', height: '300px', bottom: '5%', left: '-5%' }}></div>
+          <div className="branding-bg-shape animate-float" style={{ width: '40vw', height: '40vw', maxWidth: '500px', maxHeight: '500px', top: '-10%', right: '-10%' }}></div>
+          <div className="branding-bg-shape animate-float-slow" style={{ width: '25vw', height: '25vw', maxWidth: '300px', maxHeight: '300px', bottom: '5%', left: '-5%' }}></div>
           
-          <div className="branding-content text-center animate-fade-in-up" style={{ maxWidth: "500px" }}>
+          <div className="branding-content text-center animate-fade-in-up my-auto" style={{ maxWidth: "600px", position: "relative", zIndex: 3 }}>
             <div className="glass-pill mb-4 animate-float">
               Solusi Cerdas Pengelolaan Finansial
             </div>

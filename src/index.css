@@ -214,6 +214,10 @@ body {
 .dot-green { background: #27c93f; }
 
 /* Auth Pages Specific */
+.smaller {
+  font-size: 0.75rem !important;
+}
+
 .auth-card {
   border: none;
   border-radius: 24px;
@@ -236,11 +240,13 @@ body {
   background: linear-gradient(135deg, var(--safein-navy) 0%, #1a3c61 100%);
   position: relative;
   overflow: hidden;
+  min-height: 400px;
 }
 
 .branding-content {
   position: relative;
   z-index: 2;
+  width: 100%;
 }
 
 .branding-bg-shape {
@@ -248,6 +254,23 @@ body {
   background: linear-gradient(45deg, rgba(63, 114, 175, 0.2), transparent);
   border-radius: 50%;
   z-index: 1;
+}
+
+/* Responsive adjustments for branding shapes */
+@media (max-width: 1200px) {
+  .branding-bg-shape {
+    transform: scale(0.7);
+  }
+}
+
+@media (max-width: 992px) {
+  .branding-bg-shape {
+    display: none;
+  }
+  .branding-panel {
+    min-height: auto;
+    padding: 3rem 1.5rem !important;
+  }
 }
 
 .glass-pill {
@@ -260,5 +283,12 @@ body {
   display: inline-block;
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+/* Fluid Typography for display headers */
+@media (max-width: 1200px) {
+  .display-4 {
+    font-size: calc(1.5rem + 2vw);
+  }
 }
 

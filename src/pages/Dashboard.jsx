@@ -6,14 +6,14 @@ import { Link } from "react-router-dom";
 
 import { MdSavings } from "react-icons/md";
 import { FaMoneyBillWave } from "react-icons/fa";
-import { 
-  BsFillBagCheckFill, 
-  BsShieldCheck, 
-  BsExclamationTriangle, 
-  BsExclamationOctagon, 
-  BsQuestionCircle, 
-  BsLightbulbFill, 
-  BsGraphUp 
+import {
+  BsFillBagCheckFill,
+  BsShieldCheck,
+  BsExclamationTriangle,
+  BsExclamationOctagon,
+  BsQuestionCircle,
+  BsLightbulbFill,
+  BsGraphUp,
 } from "react-icons/bs";
 import { showAlert } from "../utils/swal";
 
@@ -103,7 +103,7 @@ const Dashboard = () => {
   // =========================
   const [timeRange, setTimeRange] = useState({
     range: "90d",
-    groupBy: "month",
+    group_by: "month",
   });
 
   // =========================
@@ -111,7 +111,7 @@ const Dashboard = () => {
   // =========================
   const [dateRange, setDateRange] = useState([null, null]);
 
-  const [startDate, endDate] = dateRange;
+  const [start_date, end_date] = dateRange;
 
   // =========================
   // FETCH DATA
@@ -121,19 +121,21 @@ const Dashboard = () => {
       try {
         setLoading(true);
 
-        const formattedStart = startDate?.toISOString().split("T")[0];
+        const formattedStart = start_date?.toISOString().split("T")[0];
 
-        const formattedEnd = endDate?.toISOString().split("T")[0];
+        const formattedEnd = end_date?.toISOString().split("T")[0];
 
-        const queryParams =
-          filterMode === "custom"
-            ? `startDate=${formattedStart}&endDate=${formattedEnd}&groupBy=day`
-            : `range=${timeRange.range}&groupBy=${timeRange.groupBy}`;
+       const queryParams =
+  filterMode === "custom"
+    ? `start_date=${formattedStart}&end_date=${formattedEnd}&group_by=day`
+    : `range=${timeRange.range}&group_by=${timeRange.group_by}`;
 
-        const summaryParams =
-          filterMode === "custom"
-            ? `startDate=${formattedStart}&endDate=${formattedEnd}`
-            : `range=${timeRange.range}`;
+const summaryParams =
+  filterMode === "custom"
+    ? `start_date=${formattedStart}&end_date=${formattedEnd}`
+    : `range=${timeRange.range}`;
+
+
 
         const [profileRes, summaryRes, monthlyRes, predictionRes] =
           await Promise.all([
@@ -191,7 +193,7 @@ const Dashboard = () => {
           showAlert(
             "Halo!",
             "info",
-            "Selamat datang! Silakan isi data Pemasukan dan Pengeluaran Anda terlebih dahulu agar sistem dapat menganalisis kondisi keuangan Anda."
+            "Selamat datang! Silakan isi data Pemasukan dan Pengeluaran Anda terlebih dahulu agar sistem dapat menganalisis kondisi keuangan Anda.",
           ).then(() => {
             navigate("/pemasukan");
           });
@@ -205,7 +207,9 @@ const Dashboard = () => {
         if (predData?.prediction?.label) {
           setPrediction({
             analysis: `Kondisi keuangan kamu ${predData.prediction.label}`,
-            nextMonthEstimation: predData.prediction.rekomendasi || "Belum ada rekomendasi untuk saat ini.",
+            nextMonthEstimation:
+              predData.prediction.rekomendasi ||
+              "Belum ada rekomendasi untuk saat ini.",
             label: predData.prediction.label,
           });
         } else {
@@ -303,12 +307,12 @@ const Dashboard = () => {
     // =========================
     // VALIDASI CUSTOM DATE
     // =========================
-    if (filterMode === "custom" && (!startDate || !endDate)) {
+    if (filterMode === "custom" && (!start_date || !end_date)) {
       return;
     }
 
     fetchData();
-  }, [navigate, timeRange, filterMode, startDate, endDate]);
+  }, [navigate, timeRange, filterMode, start_date, end_date]);
 
   // =========================
   // CHART OPTIONS
@@ -391,7 +395,7 @@ const Dashboard = () => {
         text: "#495057",
         accent: "#6C757D",
         icon: <BsQuestionCircle size={20} />,
-        status: "No Data"
+        status: "No Data",
       };
     }
 
@@ -402,7 +406,7 @@ const Dashboard = () => {
         text: "#166534",
         accent: "#22C55E",
         icon: <BsShieldCheck size={20} />,
-        status: "Aman"
+        status: "Aman",
       };
     }
     if (label === "rawan") {
@@ -412,7 +416,7 @@ const Dashboard = () => {
         text: "#92400E",
         accent: "#F59E0B",
         icon: <BsExclamationTriangle size={20} />,
-        status: "Rawan"
+        status: "Rawan",
       };
     }
     if (label === "bahaya") {
@@ -422,7 +426,7 @@ const Dashboard = () => {
         text: "#991B1B",
         accent: "#EF4444",
         icon: <BsExclamationOctagon size={20} />,
-        status: "Bahaya"
+        status: "Bahaya",
       };
     }
     return {
@@ -431,7 +435,7 @@ const Dashboard = () => {
       text: "#495057",
       accent: "#6C757D",
       icon: <BsQuestionCircle size={20} />,
-      status: "Unknown"
+      status: "Unknown",
     };
   };
 
@@ -440,78 +444,93 @@ const Dashboard = () => {
   return (
     <MainLayout user={user}>
       {/* SUMMARY */}
-<div className="row g-3 g-md-4 mb-4">
-  {/* PENDAPATAN */}
-  <div className="col-sm-6 col-md-4">
-    <Link to="/pemasukan" className="text-decoration-none">
-      <div
-        className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-        style={{
-          borderLeft: "10px solid #28A745",
-          borderRadius: "10px",
-          cursor: "pointer"
-        }}
-      >
-        <div className="card-body d-flex align-items-center">
-          <FaMoneyBillWave className="me-3 me-md-4 text-success" size={35} />
-          <div>
-            <h6 className="fw-bold small mb-1 text-uppercase text-muted">Pendapatan</h6>
-            <h3 className="fw-bold mb-0 text-dark">
-              Rp {summary.income.toLocaleString("id-ID")}
-            </h3>
-            <span className="text-muted small fw-semibold">
-              Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
-            </span>
+      <div className="row g-3 g-md-4 mb-4">
+        {/* PENDAPATAN */}
+        <div className="col-sm-6 col-md-4">
+          <Link to="/pemasukan" className="text-decoration-none">
+            <div
+              className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
+              style={{
+                borderLeft: "10px solid #28A745",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+            >
+              <div className="card-body d-flex align-items-center">
+                <FaMoneyBillWave
+                  className="me-3 me-md-4 text-success"
+                  size={35}
+                />
+                <div>
+                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                    Pendapatan
+                  </h6>
+                  <h3 className="fw-bold mb-0 text-dark">
+                    Rp {summary.income.toLocaleString("id-ID")}
+                  </h3>
+                  <span className="text-muted small fw-semibold">
+                    Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* PENGELUARAN */}
+        <div className="col-sm-6 col-md-4">
+          <Link to="/pengeluaran" className="text-decoration-none">
+            <div
+              className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
+              style={{
+                borderLeft: "10px solid #DC3545",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+            >
+              <div className="card-body d-flex align-items-center">
+                <BsFillBagCheckFill
+                  className="me-3 me-md-4 text-danger"
+                  size={35}
+                />
+                <div>
+                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                    Pengeluaran
+                  </h6>
+                  <h3 className="fw-bold mb-0 text-dark">
+                    Rp {summary.expense.toLocaleString("id-ID")}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* TABUNGAN */}
+        <div className="col-sm-12 col-md-4">
+          <div
+            className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
+            style={{
+              borderLeft: "10px solid #AF52DE",
+              borderRadius: "10px",
+            }}
+          >
+            <div className="card-body d-flex align-items-center">
+              <MdSavings
+                className="me-3 me-md-4"
+                size={40}
+                style={{ color: "#AF52DE" }}
+              />
+              <div>
+                <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                  Rasio Tabungan
+                </h6>
+                <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </Link>
-  </div>
-
-  {/* PENGELUARAN */}
-  <div className="col-sm-6 col-md-4">
-    <Link to="/pengeluaran" className="text-decoration-none">
-      <div
-        className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-        style={{
-          borderLeft: "10px solid #DC3545",
-          borderRadius: "10px",
-          cursor: "pointer"
-        }}
-      >
-        <div className="card-body d-flex align-items-center">
-          <BsFillBagCheckFill className="me-3 me-md-4 text-danger" size={35} />
-          <div>
-            <h6 className="fw-bold small mb-1 text-uppercase text-muted">Pengeluaran</h6>
-            <h3 className="fw-bold mb-0 text-dark">
-              Rp {summary.expense.toLocaleString("id-ID")}
-            </h3>
-          </div>
-        </div>
-      </div>
-    </Link>
-  </div>
-
-  {/* TABUNGAN */}
-  <div className="col-sm-12 col-md-4">
-    <div
-      className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-      style={{
-        borderLeft: "10px solid #AF52DE",
-        borderRadius: "10px",
-      }}
-    >
-      <div className="card-body d-flex align-items-center">
-        <MdSavings className="me-3 me-md-4" size={40} style={{ color: "#AF52DE" }} />
-        <div>
-          <h6 className="fw-bold small mb-1 text-uppercase text-muted">Rasio Tabungan</h6>
-          <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-      
 
       {/* PREDIKSI & ESTIMASI */}
       <div className="row row-cols-1 row-cols-lg-2 g-4 mb-4">
@@ -521,16 +540,20 @@ const Dashboard = () => {
             className="card border-0 shadow-sm overflow-hidden position-relative h-100"
             style={{ borderRadius: "16px", background: "white" }}
           >
-            <div 
-              className="position-absolute top-0 start-0 bottom-0" 
+            <div
+              className="position-absolute top-0 start-0 bottom-0"
               style={{ width: "12px", backgroundColor: predStyle.border }}
             ></div>
             <div className="card-body p-4 ms-3">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="d-flex align-items-center">
-                  <div 
-                    className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center" 
-                    style={{ backgroundColor: predStyle.bg, color: predStyle.accent, border: `1px solid ${predStyle.border}` }}
+                  <div
+                    className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                    style={{
+                      backgroundColor: predStyle.bg,
+                      color: predStyle.accent,
+                      border: `1px solid ${predStyle.border}`,
+                    }}
                   >
                     <BsGraphUp size={22} />
                   </div>
@@ -539,29 +562,42 @@ const Dashboard = () => {
                   </h5>
                 </div>
                 <div className="d-flex align-items-center gap-2">
-                  <Link to="/prediksi" className="btn btn-sm btn-outline-primary fw-bold px-3" style={{ borderRadius: '8px', fontSize: '0.75rem' }}>
+                  <Link
+                    to="/prediksi"
+                    className="btn btn-sm btn-outline-primary fw-bold px-3"
+                    style={{ borderRadius: "8px", fontSize: "0.75rem" }}
+                  >
                     Lihat Detail
                   </Link>
-                  <span 
-                    className="badge px-3 py-2" 
-                    style={{ 
-                      backgroundColor: predStyle.border, 
+                  <span
+                    className="badge px-3 py-2"
+                    style={{
+                      backgroundColor: predStyle.border,
                       color: "white",
                       fontSize: "0.75rem",
                       fontWeight: "700",
                       borderRadius: "8px",
-                      textTransform: "uppercase"
+                      textTransform: "uppercase",
                     }}
                   >
                     {predStyle.status}
                   </span>
                 </div>
               </div>
-              
-              <div className="mt-2 p-3 rounded-3" style={{ backgroundColor: `${predStyle.bg}88`, borderLeft: `4px solid ${predStyle.border}` }}>
-                <p className="mb-0 fw-semibold text-dark" style={{ fontSize: "1.05rem", lineHeight: "1.6" }}>
-                  {(summary.income > 0 || summary.expense > 0) 
-                    ? (prediction.analysis || "Belum ada analisis.") 
+
+              <div
+                className="mt-2 p-3 rounded-3"
+                style={{
+                  backgroundColor: `${predStyle.bg}88`,
+                  borderLeft: `4px solid ${predStyle.border}`,
+                }}
+              >
+                <p
+                  className="mb-0 fw-semibold text-dark"
+                  style={{ fontSize: "1.05rem", lineHeight: "1.6" }}
+                >
+                  {summary.income > 0 || summary.expense > 0
+                    ? prediction.analysis || "Belum ada analisis."
                     : "Belum ada data untuk dianalisis."}
                 </p>
               </div>
@@ -575,15 +611,19 @@ const Dashboard = () => {
             className="card border-0 shadow-sm overflow-hidden position-relative h-100"
             style={{ borderRadius: "16px", background: "white" }}
           >
-            <div 
-              className="position-absolute top-0 start-0 bottom-0" 
+            <div
+              className="position-absolute top-0 start-0 bottom-0"
               style={{ width: "12px", backgroundColor: "#0D6EFD" }}
             ></div>
             <div className="card-body p-4 ms-3">
               <div className="d-flex align-items-center mb-3">
-                <div 
-                  className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center" 
-                  style={{ backgroundColor: "#E7F1FF", color: "#0D6EFD", border: "1px solid #0D6EFD" }}
+                <div
+                  className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                  style={{
+                    backgroundColor: "#E7F1FF",
+                    color: "#0D6EFD",
+                    border: "1px solid #0D6EFD",
+                  }}
                 >
                   <BsLightbulbFill size={22} />
                 </div>
@@ -591,11 +631,20 @@ const Dashboard = () => {
                   Estimasi & Tips Keuangan
                 </h5>
               </div>
-              
-              <div className="mt-2 p-3 rounded-3" style={{ backgroundColor: "#F0F7FF", borderLeft: "4px solid #0D6EFD" }}>
-                <p className="mb-0 fw-semibold text-dark" style={{ fontSize: "1.05rem", lineHeight: "1.6" }}>
-                  {(summary.income > 0 || summary.expense > 0) 
-                    ? (prediction.nextMonthEstimation || "Belum ada estimasi.") 
+
+              <div
+                className="mt-2 p-3 rounded-3"
+                style={{
+                  backgroundColor: "#F0F7FF",
+                  borderLeft: "4px solid #0D6EFD",
+                }}
+              >
+                <p
+                  className="mb-0 fw-semibold text-dark"
+                  style={{ fontSize: "1.05rem", lineHeight: "1.6" }}
+                >
+                  {summary.income > 0 || summary.expense > 0
+                    ? prediction.nextMonthEstimation || "Belum ada estimasi."
                     : "Belum ada data untuk estimasi."}
                 </p>
               </div>
@@ -635,7 +684,7 @@ const Dashboard = () => {
               <select
                 className="form-select"
                 style={{ width: "220px" }}
-                value={`${timeRange.range}-${timeRange.groupBy}`}
+                value={`${timeRange.range}-${timeRange.group_by}`}
                 onChange={(e) => {
                   const value = e.target.value;
 
@@ -643,28 +692,28 @@ const Dashboard = () => {
                     case "30d-day":
                       setTimeRange({
                         range: "30d",
-                        groupBy: "day",
+                        group_by: "day",
                       });
                       break;
 
                     case "60d-day":
                       setTimeRange({
                         range: "60d",
-                        groupBy: "day",
+                        group_by: "day",
                       });
                       break;
 
                     case "90d-day":
                       setTimeRange({
                         range: "90d",
-                        groupBy: "day",
+                        group_by: "day",
                       });
                       break;
 
                     case "90d-month":
                       setTimeRange({
                         range: "90d",
-                        groupBy: "month",
+                        group_by: "month",
                       });
                       break;
 
@@ -687,8 +736,8 @@ const Dashboard = () => {
             {filterMode === "custom" && (
               <DatePicker
                 selectsRange={true}
-                startDate={startDate}
-                endDate={endDate}
+                startDate={start_date}
+                endDate={end_date}
                 onChange={(update) => {
                   setDateRange(update);
                 }}

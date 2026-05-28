@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../utils/api";
 import MainLayout from "../components/MainLayout";
 
@@ -12,6 +12,7 @@ import {
   BsQuestionCircle,
   BsLightbulbFill,
   BsGraphUp,
+  BsClipboardData,
 } from "react-icons/bs";
 
 import { FaChartBar, FaMoneyBillWave } from "react-icons/fa";
@@ -91,6 +92,7 @@ const Prediksi = () => {
   // LOADING
   // =========================
   const [loading, setLoading] = useState(true);
+  const [hasEnoughData, setHasEnoughData] = useState(false);
 
   // =========================
   // FETCH DATA
@@ -115,8 +117,8 @@ const Prediksi = () => {
           api.get("/transactions/summary"),
           api.get("/transactions?type=income"),
           api.get("/transactions?type=expense"),
-          api.get("/financial-analysis/latest"),
-          api.get("/expense-prediction/forecast"),
+          api.get("/financial-analysis/latest").catch(() => ({ data: {} })),
+          api.get("/expense-prediction/forecast").catch(() => ({ data: {} })),
         ]);
 
         // =========================
@@ -168,6 +170,9 @@ const Prediksi = () => {
           income: monthlyMap[key].income,
           expense: monthlyMap[key].expense,
         }));
+
+        const enough = sortedKeys.length >= 3;
+        setHasEnoughData(enough);
 
         let actualIncome = 0;
         let actualExpense = 0;
@@ -570,292 +575,342 @@ const Prediksi = () => {
           </h2>
         </div>
 
-        {/* INFO */}
-        <div
-          className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-start"
-          style={{ borderRadius: "12px", backgroundColor: "#E7F1FF" }}
-        >
-          <BsLightbulbFill
-            className="text-primary me-3 flex-shrink-0 mt-1"
-            size={20}
-          />
-          <span className="fw-semibold text-dark">
-            Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan
-            untuk mendapatkan hasil prediksi yang lebih akurat.
-          </span>
-        </div>
-
-        {/* SUMMARY SECTION */}
-        <div className="row g-3 g-md-4 mb-4">
-          <div className="col-sm-6 col-md-4">
-            <div
-              className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-              style={{
-                borderLeft: "10px solid #28A745",
-                borderRadius: "10px",
-              }}
-            >
-              <div className="card-body d-flex align-items-center">
-                <FaMoneyBillWave className="me-3 me-md-4 text-success" size={35} />
-                <div>
-                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">Total Pendapatan</h6>
-                  <h3 className="fw-bold mb-0 text-dark">Rp {summary.income.toLocaleString("id-ID")}</h3>
-                  <span className="text-muted small fw-semibold">
-                    Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
+        {!hasEnoughData ? (
+          <div className="row justify-content-center mt-5">
+            <div className="col-md-8 text-center">
+              <div
+                className="card border-0 shadow-sm p-5 bg-white"
+                style={{ borderRadius: "20px" }}
+              >
+                <div className="mb-4">
+                  <div
+                    className="d-inline-flex align-items-center justify-content-center p-4 rounded-circle mb-3"
+                    style={{ backgroundColor: "#FFFBEB", color: "#F59E0B" }}
+                  >
+                    <BsClipboardData size={60} />
+                  </div>
+                  <h3 className="fw-bold text-dark mt-3">Data Belum Mencukupi</h3>
+                  <p className="text-muted fw-semibold mx-auto" style={{ maxWidth: "500px", fontSize: "1.1rem" }}>
+                    Kami membutuhkan data transaksi minimal <strong>3 bulan terakhir</strong> untuk memberikan analisis dan prediksi keuangan yang akurat untuk Anda.
+                  </p>
+                </div>
+                
+                <div className="alert alert-warning border-0 mb-4 d-inline-block mx-auto" style={{ backgroundColor: "#FFFBEB", borderRadius: "10px" }}>
+                  <BsExclamationTriangle className="me-2" />
+                  <span className="small fw-bold text-dark">
+                    Silahkan isi data pemasukan dan pengeluaran Anda terlebih dahulu.
                   </span>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-6 col-md-4">
-            <div
-              className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-              style={{
-                borderLeft: "10px solid #DC3545",
-                borderRadius: "10px",
-              }}
-            >
-              <div className="card-body d-flex align-items-center">
-                <BsFillBagCheckFill
-                  className="me-3 me-md-4 text-danger"
-                  size={35}
-                />
-                <div>
-                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
-                    Total Pengeluaran
-                  </h6>
-                  <h3 className="fw-bold mb-0 text-dark">
-                    Rp {summary.expense.toLocaleString("id-ID")}
-                  </h3>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-sm-12 col-md-4">
-            <div
-              className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-              style={{
-                borderLeft: "10px solid #AF52DE",
-                borderRadius: "10px",
-              }}
-            >
-              <div className="card-body d-flex align-items-center">
-                <MdSavings
-                  className="me-3 me-md-4"
-                  size={40}
-                  style={{ color: "#AF52DE" }}
-                />
-                <div>
-                  <h6 className="fw-bold small mb-1 text-uppercase text-muted">
-                    Rasio Tabungan
-                  </h6>
-                  <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* PREDICTION CARDS */}
-        <div className="row row-cols-1 row-cols-md-2 g-4">
-          <div className="col mb-4">
+                <div className="d-flex justify-content-center gap-3">
+                  <Link
+                    to="/pemasukan"
+                    className="btn btn-primary px-4 py-2 fw-bold shadow-sm"
+                    style={{ borderRadius: "10px" }}
+                  >
+                    Input Pemasukan
+                  </Link>
+                  <Link
+                    to="/pengeluaran"
+                    className="btn btn-outline-danger px-4 py-2 fw-bold shadow-sm"
+                    style={{ borderRadius: "10px" }}
+                  >
+                    Input Pengeluaran
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* INFO */}
             <div
-              className="card border-0 shadow-sm h-100 overflow-hidden"
-              style={{ borderRadius: "16px", background: "white" }}
+              className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-start"
+              style={{ borderRadius: "12px", backgroundColor: "#E7F1FF" }}
             >
-              <div
-                style={{
-                  height: "8px",
-                  backgroundColor: predStyle.border,
-                }}
-              ></div>
-              <div className="card-body p-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                  <div className="d-flex align-items-center">
+              <BsLightbulbFill
+                className="text-primary me-3 flex-shrink-0 mt-1"
+                size={20}
+              />
+              <span className="fw-semibold text-dark">
+                Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan
+                untuk mendapatkan hasil prediksi yang lebih akurat.
+              </span>
+            </div>
+
+            {/* SUMMARY SECTION */}
+            <div className="row g-3 g-md-4 mb-4">
+              <div className="col-sm-6 col-md-4">
+                <div
+                  className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
+                  style={{
+                    borderLeft: "10px solid #28A745",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <div className="card-body d-flex align-items-center">
+                    <FaMoneyBillWave className="me-3 me-md-4 text-success" size={35} />
+                    <div>
+                      <h6 className="fw-bold small mb-1 text-uppercase text-muted">Total Pendapatan</h6>
+                      <h3 className="fw-bold mb-0 text-dark">Rp {summary.income.toLocaleString("id-ID")}</h3>
+                      <span className="text-muted small fw-semibold">
+                        Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-sm-6 col-md-4">
+                <div
+                  className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
+                  style={{
+                    borderLeft: "10px solid #DC3545",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <div className="card-body d-flex align-items-center">
+                    <BsFillBagCheckFill
+                      className="me-3 me-md-4 text-danger"
+                      size={35}
+                    />
+                    <div>
+                      <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                        Total Pengeluaran
+                      </h6>
+                      <h3 className="fw-bold mb-0 text-dark">
+                        Rp {summary.expense.toLocaleString("id-ID")}
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-sm-12 col-md-4">
+                <div
+                  className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
+                  style={{
+                    borderLeft: "10px solid #AF52DE",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <div className="card-body d-flex align-items-center">
+                    <MdSavings
+                      className="me-3 me-md-4"
+                      size={40}
+                      style={{ color: "#AF52DE" }}
+                    />
+                    <div>
+                      <h6 className="fw-bold small mb-1 text-uppercase text-muted">
+                        Rasio Tabungan
+                      </h6>
+                      <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* PREDICTION CARDS */}
+            <div className="row row-cols-1 row-cols-md-2 g-4">
+              <div className="col mb-4">
+                <div
+                  className="card border-0 shadow-sm h-100 overflow-hidden"
+                  style={{ borderRadius: "16px", background: "white" }}
+                >
+                  <div
+                    style={{
+                      height: "8px",
+                      backgroundColor: predStyle.border,
+                    }}
+                  ></div>
+                  <div className="card-body p-4">
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                      <div className="d-flex align-items-center">
+                        <div
+                          className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                          style={{
+                            backgroundColor: predStyle.bg,
+                            color: predStyle.accent,
+                            border: `1px solid ${predStyle.border}`,
+                          }}
+                        >
+                          {predStyle.icon}
+                        </div>
+                        <h5 className="fw-bold mb-0 text-dark">
+                          Prediksi Pemasukan
+                        </h5>
+                      </div>
+                      <span
+                        className="badge px-3 py-2"
+                        style={{
+                          backgroundColor: predStyle.border,
+                          color: "white",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        {predStyle.status}
+                      </span>
+                    </div>
                     <div
-                      className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                      className="p-3 rounded-3"
                       style={{
-                        backgroundColor: predStyle.bg,
-                        color: predStyle.accent,
-                        border: `1px solid ${predStyle.border}`,
+                        backgroundColor: `${predStyle.bg}88`,
+                        borderLeft: `4px solid ${predStyle.border}`,
                       }}
                     >
-                      {predStyle.icon}
+                      <div className="d-flex align-items-center justify-content-between">
+                        <span className="text-muted small fw-bold text-uppercase">
+                          Prediksi Bulan Depan
+                        </span>
+                        <span
+                          className="fw-bold text-success"
+                          style={{ fontSize: "1.2rem" }}
+                        >
+                          Rp {prediction.predIncome.toLocaleString("id-ID")}
+                        </span>
+                      </div>
                     </div>
-                    <h5 className="fw-bold mb-0 text-dark">
-                      Prediksi Pemasukan
-                    </h5>
-                  </div>
-                  <span
-                    className="badge px-3 py-2"
-                    style={{
-                      backgroundColor: predStyle.border,
-                      color: "white",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    {predStyle.status}
-                  </span>
-                </div>
-                <div
-                  className="p-3 rounded-3"
-                  style={{
-                    backgroundColor: `${predStyle.bg}88`,
-                    borderLeft: `4px solid ${predStyle.border}`,
-                  }}
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <span className="text-muted small fw-bold text-uppercase">
-                      Prediksi Bulan Depan
-                    </span>
-                    <span
-                      className="fw-bold text-success"
-                      style={{ fontSize: "1.2rem" }}
-                    >
-                      Rp {prediction.predIncome.toLocaleString("id-ID")}
-                    </span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="col mb-4">
-            <div
-              className="card border-0 shadow-sm h-100 overflow-hidden"
-              style={{ borderRadius: "16px", background: "white" }}
-            >
-              <div
-                style={{ height: "8px", backgroundColor: "#0D6EFD" }}
-              ></div>
-              <div className="card-body p-4">
-                <div className="d-flex align-items-center mb-4">
+              <div className="col mb-4">
+                <div
+                  className="card border-0 shadow-sm h-100 overflow-hidden"
+                  style={{ borderRadius: "16px", background: "white" }}
+                >
                   <div
-                    className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                    style={{ height: "8px", backgroundColor: "#0D6EFD" }}
+                  ></div>
+                  <div className="card-body p-4">
+                    <div className="d-flex align-items-center mb-4">
+                      <div
+                        className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                        style={{
+                          backgroundColor: "#E7F1FF",
+                          color: "#0D6EFD",
+                          border: "1px solid #0D6EFD",
+                        }}
+                      >
+                        <BsLightbulbFill size={24} />
+                      </div>
+                      <h5 className="fw-bold mb-0 text-dark">
+                        Prediksi Pengeluaran
+                      </h5>
+                    </div>
+                    <div
+                      className="p-3 rounded-3"
+                      style={{
+                        backgroundColor: "#F0F7FF",
+                        borderLeft: "4px solid #0D6EFD",
+                      }}
+                    >
+                      <div className="d-flex align-items-center justify-content-between">
+                        <span className="text-muted small fw-bold text-uppercase">
+                          Prediksi Bulan Depan
+                        </span>
+                        <span
+                          className="fw-bold text-danger"
+                          style={{ fontSize: "1.2rem" }}
+                        >
+                          Rp {prediction.predExpense.toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* FORECAST */}
+            <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
+              <div className="d-flex align-items-center mb-4">
+                <div
+                  className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center"
+                  style={{
+                    backgroundColor: "#E7F1FF",
+                    color: "#0D6EFD",
+                    border: "1px solid #0D6EFD",
+                  }}
+                >
+                  <BsGraphUp size={22} />
+                </div>
+                <h5 className="fw-bold mb-0 text-dark">Analisis Forecast</h5>
+              </div>
+              <div className="px-2">
+                <div className="mb-0">
+                  <h6 className="fw-bold text-primary text-uppercase small mb-2 d-flex align-items-center">
+                    <span
+                      className="badge bg-primary me-2"
+                      style={{ width: "4px", height: "16px", padding: 0 }}
+                    >
+                      {" "}
+                    </span>
+                    Insight AI
+                  </h6>
+                  <div
+                    className="p-3 rounded-3"
                     style={{
-                      backgroundColor: "#E7F1FF",
-                      color: "#0D6EFD",
-                      border: "1px solid #0D6EFD",
+                      backgroundColor: "#F0F7FF",
+                      borderLeft: "4px solid #0D6EFD",
                     }}
                   >
-                    <BsLightbulbFill size={24} />
-                  </div>
-                  <h5 className="fw-bold mb-0 text-dark">
-                    Prediksi Pengeluaran
-                  </h5>
-                </div>
-                <div
-                  className="p-3 rounded-3"
-                  style={{
-                    backgroundColor: "#F0F7FF",
-                    borderLeft: "4px solid #0D6EFD",
-                  }}
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <span className="text-muted small fw-bold text-uppercase">
-                      Prediksi Bulan Depan
-                    </span>
-                    <span
-                      className="fw-bold text-danger"
-                      style={{ fontSize: "1.2rem" }}
+                    <p
+                      className="mb-0 text-dark fw-semibold"
+                      style={{
+                        fontSize: "1.05rem",
+                        lineHeight: "1.7",
+                        whiteSpace: "pre-wrap",
+                      }}
                     >
-                      Rp {prediction.predExpense.toLocaleString("id-ID")}
-                    </span>
+                      {String(prediction.forecastRecommendation)}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* FORECAST */}
-        <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
-          <div className="d-flex align-items-center mb-4">
-            <div
-              className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center"
-              style={{
-                backgroundColor: "#E7F1FF",
-                color: "#0D6EFD",
-                border: "1px solid #0D6EFD",
-              }}
-            >
-              <BsGraphUp size={22} />
-            </div>
-            <h5 className="fw-bold mb-0 text-dark">Analisis Forecast</h5>
-          </div>
-          <div className="px-2">
-            <div className="mb-0">
-              <h6 className="fw-bold text-primary text-uppercase small mb-2 d-flex align-items-center">
-                <span
-                  className="badge bg-primary me-2"
-                  style={{ width: "4px", height: "16px", padding: 0 }}
-                >
-                  {" "}
-                </span>
-                Insight AI
-              </h6>
-              <div
-                className="p-3 rounded-3"
-                style={{
-                  backgroundColor: "#F0F7FF",
-                  borderLeft: "4px solid #0D6EFD",
-                }}
-              >
-                <p
-                  className="mb-0 text-dark fw-semibold"
-                  style={{
-                    fontSize: "1.05rem",
-                    lineHeight: "1.7",
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
-                  {String(prediction.forecastRecommendation)}
-                </p>
+            {/* CHART */}
+            <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
+              <div className="d-flex align-items-center justify-content-between mb-4">
+                <h5 className="fw-bold mb-0" style={{ color: "#003366" }}>
+                  Grafik Pemasukan vs Pengeluaran Per Bulan
+                </h5>
+                {/* Keterangan garis prediksi */}
+                <div className="d-flex align-items-center gap-3">
+                  <span
+                    className="small text-muted d-flex align-items-center gap-1"
+                  >
+                    <svg width="24" height="10">
+                      <line
+                        x1="0" y1="5" x2="24" y2="5"
+                        stroke="#0D6EFD"
+                        strokeWidth="2"
+                        strokeDasharray="5,3"
+                      />
+                    </svg>
+                    = Prediksi Pemasukan (Biru)
+                  </span>
+                  <span
+                    className="small text-muted d-flex align-items-center gap-1"
+                  >
+                    <svg width="24" height="10">
+                      <line
+                        x1="0" y1="5" x2="24" y2="5"
+                        stroke="#AF52DE"
+                        strokeWidth="2"
+                        strokeDasharray="5,3"
+                      />
+                    </svg>
+                    = Prediksi Pengeluaran (Ungu)
+                  </span>
+                  <span className="small text-muted">★ = Titik prediksi</span>
+                </div>
+              </div>
+              <div style={{ height: "400px" }}>
+                <Line options={chartOptions} data={chartData} />
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* CHART */}
-        <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
-          <div className="d-flex align-items-center justify-content-between mb-4">
-            <h5 className="fw-bold mb-0" style={{ color: "#003366" }}>
-              Grafik Pemasukan vs Pengeluaran Per Bulan
-            </h5>
-            {/* Keterangan garis prediksi */}
-            <div className="d-flex align-items-center gap-3">
-              <span
-                className="small text-muted d-flex align-items-center gap-1"
-              >
-                <svg width="24" height="10">
-                  <line
-                    x1="0" y1="5" x2="24" y2="5"
-                    stroke="#0D6EFD"
-                    strokeWidth="2"
-                    strokeDasharray="5,3"
-                  />
-                </svg>
-                = Prediksi Pemasukan (Biru)
-              </span>
-              <span
-                className="small text-muted d-flex align-items-center gap-1"
-              >
-                <svg width="24" height="10">
-                  <line
-                    x1="0" y1="5" x2="24" y2="5"
-                    stroke="#AF52DE"
-                    strokeWidth="2"
-                    strokeDasharray="5,3"
-                  />
-                </svg>
-                = Prediksi Pengeluaran (Ungu)
-              </span>
-              <span className="small text-muted">★ = Titik prediksi</span>
-            </div>
-          </div>
-          <div style={{ height: "400px" }}>
-            <Line options={chartOptions} data={chartData} />
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </MainLayout>
   );

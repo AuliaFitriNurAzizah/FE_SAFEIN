@@ -3,9 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../utils/api";
 import MainLayout from "../components/MainLayout";
 
-import { MdSavings } from "react-icons/md";
 import {
-  BsFillBagCheckFill,
   BsShieldCheck,
   BsExclamationTriangle,
   BsExclamationOctagon,
@@ -15,7 +13,7 @@ import {
   BsClipboardData,
 } from "react-icons/bs";
 
-import { FaChartBar, FaMoneyBillWave } from "react-icons/fa";
+import { FaChartBar } from "react-icons/fa";
 
 // =========================
 // IMPORT CHART
@@ -53,19 +51,6 @@ const Prediksi = () => {
   // =========================
   const [user, setUser] = useState({
     name: "",
-  });
-
-  // =========================
-  // SUMMARY
-  // =========================
-  const [summary, setSummary] = useState({
-    income: 0,
-    expense: 0,
-    actualIncome: 0,
-    actualExpense: 0,
-    ratio: 0,
-    savedAmount: 0,
-    currentMonthName: "",
   });
 
   // =========================
@@ -107,14 +92,12 @@ const Prediksi = () => {
         // =========================
         const [
           profileRes,
-          summaryRes,
           incomeTransRes,
           expenseTransRes,
           predictionRes,
           forecastRes,
         ] = await Promise.all([
           api.get("/users/me"),
-          api.get("/transactions/summary"),
           api.get("/transactions?type=income"),
           api.get("/transactions?type=expense"),
           api.get("/financial-analysis/latest").catch(() => ({ data: {} })),
@@ -140,7 +123,6 @@ const Prediksi = () => {
           incomeTransRes.data?.data || incomeTransRes.data || [];
         const expenseTransactions =
           expenseTransRes.data?.data || expenseTransRes.data || [];
-        const summaryData = summaryRes?.data?.data || {};
 
         const monthlyMap = {};
 
@@ -173,45 +155,6 @@ const Prediksi = () => {
 
         const enough = sortedKeys.length >= 3;
         setHasEnoughData(enough);
-
-        let actualIncome = 0;
-        let actualExpense = 0;
-        let currentMonthName = "Bulan Ini";
-
-        if (monthlyArray.length > 0) {
-          const last = monthlyArray[monthlyArray.length - 1];
-          actualIncome = last.income || 0;
-          actualExpense = last.expense || 0;
-
-          const val = last.month || "";
-          if (val.match(/^\d{4}-\d{2}$/)) {
-            const [y, m] = val.split("-");
-            const d = new Date(y, parseInt(m) - 1);
-            currentMonthName = d.toLocaleDateString("id-ID", {
-              month: "long",
-            });
-          } else {
-            currentMonthName = val || "Bulan Ini";
-          }
-        }
-
-        const totalIncome = summaryData.totalIncome || 0;
-        const totalExpense = summaryData.totalExpense || 0;
-        const savedAmount = totalIncome - totalExpense;
-        const ratio =
-          totalIncome > 0
-            ? Math.round((savedAmount / totalIncome) * 100)
-            : 0;
-
-        setSummary({
-          income: totalIncome,
-          expense: totalExpense,
-          actualIncome,
-          actualExpense,
-          ratio: ratio < 0 ? 0 : ratio,
-          savedAmount,
-          currentMonthName,
-        });
 
         // =========================
         // FORECAST DATA
@@ -636,77 +579,6 @@ const Prediksi = () => {
                 Silahkan isi data pemasukan dan pengeluaran anda minimal 3 bulan
                 untuk mendapatkan hasil prediksi yang lebih akurat.
               </span>
-            </div>
-
-            {/* SUMMARY SECTION */}
-            <div className="row g-3 g-md-4 mb-4">
-              <div className="col-sm-6 col-md-4">
-                <div
-                  className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-                  style={{
-                    borderLeft: "10px solid #28A745",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <div className="card-body d-flex align-items-center">
-                    <FaMoneyBillWave className="me-3 me-md-4 text-success" size={35} />
-                    <div>
-                      <h6 className="fw-bold small mb-1 text-uppercase text-muted">Total Pendapatan</h6>
-                      <h3 className="fw-bold mb-0 text-dark">Rp {summary.income.toLocaleString("id-ID")}</h3>
-                      <span className="text-muted small fw-semibold">
-                        Sisa: Rp {summary.savedAmount.toLocaleString("id-ID")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-sm-6 col-md-4">
-                <div
-                  className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-                  style={{
-                    borderLeft: "10px solid #DC3545",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <div className="card-body d-flex align-items-center">
-                    <BsFillBagCheckFill
-                      className="me-3 me-md-4 text-danger"
-                      size={35}
-                    />
-                    <div>
-                      <h6 className="fw-bold small mb-1 text-uppercase text-muted">
-                        Total Pengeluaran
-                      </h6>
-                      <h3 className="fw-bold mb-0 text-dark">
-                        Rp {summary.expense.toLocaleString("id-ID")}
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-sm-12 col-md-4">
-                <div
-                  className="card h-100 border-0 shadow-sm p-2 p-md-3 bg-white"
-                  style={{
-                    borderLeft: "10px solid #AF52DE",
-                    borderRadius: "10px",
-                  }}
-                >
-                  <div className="card-body d-flex align-items-center">
-                    <MdSavings
-                      className="me-3 me-md-4"
-                      size={40}
-                      style={{ color: "#AF52DE" }}
-                    />
-                    <div>
-                      <h6 className="fw-bold small mb-1 text-uppercase text-muted">
-                        Rasio Tabungan
-                      </h6>
-                      <h2 className="fw-bold mb-0">{summary.ratio} %</h2>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* PREDICTION CARDS */}

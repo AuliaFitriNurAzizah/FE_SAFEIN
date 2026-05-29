@@ -78,6 +78,13 @@ const Prediksi = () => {
   // =========================
   const [loading, setLoading] = useState(true);
   const [hasEnoughData, setHasEnoughData] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // =========================
   // FETCH DATA
@@ -379,8 +386,30 @@ const Prediksi = () => {
     plugins: {
       legend: {
         position: "top",
+        onClick: (e, legendItem, legend) => {
+          const index = legendItem.datasetIndex;
+          const ci = legend.chart;
+
+          // Sinkronisasi: 0=Pemasukan <-> 2=Prediksi Pemasukan, 1=Pengeluaran <-> 3=Prediksi Pengeluaran
+          let partnerIndex;
+          if (index === 0) partnerIndex = 2;
+          else if (index === 2) partnerIndex = 0;
+          else if (index === 1) partnerIndex = 3;
+          else if (index === 3) partnerIndex = 1;
+
+          if (ci.isDatasetVisible(index)) {
+            ci.hide(index);
+            if (partnerIndex !== undefined) ci.hide(partnerIndex);
+          } else {
+            ci.show(index);
+            if (partnerIndex !== undefined) ci.show(partnerIndex);
+          }
+        },
         labels: {
           usePointStyle: true,
+          font: {
+            size: isMobile ? 10 : 12,
+          },
           // Bedakan style legend prediksi vs aktual
           generateLabels: (chart) => {
             const datasets = chart.data.datasets;
@@ -409,12 +438,18 @@ const Prediksi = () => {
           title: (items) => {
             if (!items.length) return "";
             const label = items[0].label || "";
-            return label.includes("★")
-              ? `${label} (Prediksi)`
-              : label;
+            return label.includes("★") ? `${label} (Prediksi)` : label;
           },
         },
-        filter: (item) => item.raw !== null && item.raw !== undefined,
+        filter: (item) => {
+          if (item.raw === null || item.raw === undefined) return false;
+          // Sembunyikan dataset prediksi di titik sambung (bulan terakhir aktual)
+          // supaya tidak duplikat dengan data aktual di tooltip
+          if (item.dataset.label.includes("Prediksi")) {
+            return item.dataIndex === item.dataset.data.length - 1;
+          }
+          return true;
+        },
       },
     },
     scales: {
@@ -422,6 +457,9 @@ const Prediksi = () => {
         beginAtZero: true,
         ticks: {
           callback: (value) => `Rp ${value.toLocaleString("id-ID")}`,
+          font: {
+            size: isMobile ? 10 : 12,
+          },
         },
       },
       x: {
@@ -438,7 +476,7 @@ const Prediksi = () => {
             const label = ctx.chart.data.labels?.[ctx.index] || "";
             return {
               weight: label.includes("★") ? "bold" : "normal",
-              size: 12,
+              size: isMobile ? 10 : 12,
             };
           },
         },
@@ -693,7 +731,7 @@ const Prediksi = () => {
             </div>
 
             {/* FORECAST */}
-            <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
+            <div className={`card border-0 shadow-sm ${isMobile ? 'p-3' : 'p-4'} mb-4 bg-white rounded-4`}>
               <div className="d-flex align-items-center mb-4">
                 <div
                   className="p-2 rounded-3 me-3 d-flex align-items-center justify-content-center"
@@ -728,7 +766,7 @@ const Prediksi = () => {
                     <p
                       className="mb-0 text-dark fw-semibold"
                       style={{
-                        fontSize: "1.05rem",
+                        fontSize: isMobile ? "0.95rem" : "1.05rem",
                         lineHeight: "1.7",
                         whiteSpace: "pre-wrap",
                       }}
@@ -741,13 +779,13 @@ const Prediksi = () => {
             </div>
 
             {/* CHART */}
-            <div className="card border-0 shadow-sm p-4 mb-4 bg-white rounded-4">
-              <div className="d-flex align-items-center justify-content-between mb-4">
-                <h5 className="fw-bold mb-0" style={{ color: "#003366" }}>
+            <div className={`card border-0 shadow-sm ${isMobile ? 'p-3' : 'p-4'} mb-4 bg-white rounded-4`}>
+              <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4">
+                <h5 className="fw-bold mb-3 mb-md-0" style={{ color: "#003366" }}>
                   Grafik Pemasukan vs Pengeluaran Per Bulan
                 </h5>
                 {/* Keterangan garis prediksi */}
-                <div className="d-flex align-items-center gap-3">
+                <div className="d-flex flex-wrap align-items-center gap-2 gap-md-3">
                   <span
                     className="small text-muted d-flex align-items-center gap-1"
                   >
@@ -759,7 +797,7 @@ const Prediksi = () => {
                         strokeDasharray="5,3"
                       />
                     </svg>
-                    = Prediksi Pemasukan (Biru)
+                    <span style={{ fontSize: isMobile ? '10px' : 'inherit' }}>= Prediksi Pemasukan</span>
                   </span>
                   <span
                     className="small text-muted d-flex align-items-center gap-1"
@@ -772,12 +810,12 @@ const Prediksi = () => {
                         strokeDasharray="5,3"
                       />
                     </svg>
-                    = Prediksi Pengeluaran (Ungu)
+                    <span style={{ fontSize: isMobile ? '10px' : 'inherit' }}>= Prediksi Pengeluaran</span>
                   </span>
-                  <span className="small text-muted">★ = Titik prediksi</span>
+                  <span className="small text-muted" style={{ fontSize: isMobile ? '10px' : 'inherit' }}>★ = Titik prediksi</span>
                 </div>
               </div>
-              <div style={{ height: "400px" }}>
+              <div style={{ height: isMobile ? "300px" : "450px" }}>
                 <Line options={chartOptions} data={chartData} />
               </div>
             </div>

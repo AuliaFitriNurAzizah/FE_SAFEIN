@@ -25,10 +25,13 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/pendapatan" element={<Pemasukan />} />
+        <Route path="/pemasukan" element={<Pemasukan />} />
         <Route path="/pengeluaran" element={<Pengeluaran />} />
         <Route path="/kategori" element={<Kategori />} /> 
         <Route path="/prediksi" element={<Prediksi />} /> 
+
+        {/* Fallback route to prevent blank screen */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );

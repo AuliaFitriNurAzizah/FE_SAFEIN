@@ -78,8 +78,8 @@ const MainLayout = ({ children, user }) => {
           </li>
           
           <li className="nav-item mb-1 px-2">
-            <Link to="/pendapatan" className={getNavLinkClass('/pendapatan')} onClick={() => setIsSidebarOpen(false)}>
-              <BsGraphUpArrow className="me-3 text-success" size={20} /> Pendapatan
+            <Link to="/pemasukan" className={getNavLinkClass('/pemasukan')} onClick={() => setIsSidebarOpen(false)}>
+              <BsGraphUpArrow className="me-3 text-success" size={20} /> Pemasukan
             </Link>
           </li>
           <li className="nav-item mb-3 px-2">

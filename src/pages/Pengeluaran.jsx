@@ -177,9 +177,10 @@ const Pengeluaran = () => {
   });
 
   // Pagination Logic
-  const totalPages = Math.ceil(filteredExpenses.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const validItemsPerPage = itemsPerPage > 0 ? itemsPerPage : 10;
+  const totalPages = Math.max(1, Math.ceil(filteredExpenses.length / validItemsPerPage));
+  const indexOfLastItem = currentPage * validItemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - validItemsPerPage;
   const currentItems = filteredExpenses.slice(indexOfFirstItem, indexOfLastItem);
 
   const handlePageChange = (pageNumber) => {

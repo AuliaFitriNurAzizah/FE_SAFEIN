@@ -175,9 +175,10 @@ const Pemasukan = () => {
   });
 
   // Pagination Logic
-  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const validItemsPerPage = itemsPerPage > 0 ? itemsPerPage : 10;
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / validItemsPerPage));
+  const indexOfLastItem = currentPage * validItemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - validItemsPerPage;
   const currentItems = filteredTransactions.slice(indexOfFirstItem, indexOfLastItem);
 
   const handlePageChange = (pageNumber) => {

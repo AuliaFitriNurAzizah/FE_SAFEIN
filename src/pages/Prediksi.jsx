@@ -253,113 +253,67 @@ const Prediksi = () => {
           nextMonthLabel,
         ];
 
-        // Data aktual: nilai normal + null di slot prediksi
-        const incomeActualData = [
+        // Gabungkan data aktual + prediksi
+        const incomeFullData = [
           ...monthlyArray.map((item) => item.income),
-          null,
+          predIncome,
         ];
-        const expenseActualData = [
+        const expenseFullData = [
           ...monthlyArray.map((item) => item.expense),
-          null,
-        ];
-
-        // Data garis prediksi: null sampai titik terakhir aktual, lalu sambung ke nilai prediksi
-        // Ini membuat garis prediksi "menyambung" dari titik terakhir aktual
-        const lastIncome =
-          monthlyArray.length > 0
-            ? monthlyArray[monthlyArray.length - 1].income
-            : null;
-        const lastExpense =
-          monthlyArray.length > 0
-            ? monthlyArray[monthlyArray.length - 1].expense
-            : null;
-
-        const incomePredData = [
-          ...Array(Math.max(monthlyArray.length - 1, 0)).fill(null),
-          lastIncome,   // titik sambung dari data terakhir aktual
-          predIncome,   // titik prediksi bulan depan
-        ];
-        const expensePredData = [
-          ...Array(Math.max(monthlyArray.length - 1, 0)).fill(null),
-          lastExpense,  // titik sambung dari data terakhir aktual
-          predExpense,  // titik prediksi bulan depan
+          predExpense,
         ];
 
         setChartData({
           labels: chartLabels,
           datasets: [
-            // ── Garis Aktual Pemasukan ──
+            // ── Garis Pemasukan ──
             {
               label: "Pemasukan",
-              data: incomeActualData,
+              data: incomeFullData,
               borderColor: "#28A745",
               backgroundColor: "rgba(40, 167, 69, 0.1)",
               fill: true,
               tension: 0,
-              pointRadius: 4,
-              pointBackgroundColor: "#28A745",
               borderWidth: 3,
-              spanGaps: false,
+              pointRadius: (ctx) => {
+                // Titik terakhir (prediksi) lebih besar
+                return ctx.dataIndex === incomeFullData.length - 1 ? 8 : 4;
+              },
+              pointBackgroundColor: (ctx) => {
+                return ctx.dataIndex === incomeFullData.length - 1 ? "#fff" : "#28A745";
+              },
+              pointBorderColor: "#28A745",
+              pointBorderWidth: 2,
+              pointStyle: (ctx) => {
+                return ctx.dataIndex === incomeFullData.length - 1 ? "star" : "circle";
+              },
+              segment: {
+                borderDash: (ctx) => (ctx.p1DataIndex === incomeFullData.length - 1 ? [7, 4] : undefined),
+              },
             },
-            // ── Garis Aktual Pengeluaran ──
+            // ── Garis Pengeluaran ──
             {
               label: "Pengeluaran",
-              data: expenseActualData,
+              data: expenseFullData,
               borderColor: "#DC3545",
               backgroundColor: "rgba(220, 53, 69, 0.1)",
               fill: true,
               tension: 0,
-              pointRadius: 4,
-              pointBackgroundColor: "#DC3545",
               borderWidth: 3,
-              spanGaps: false,
-            },
-            // ── Garis Prediksi Pemasukan (putus-putus) ──
-            {
-              label: "Prediksi Pemasukan (Biru)",
-              data: incomePredData,
-              borderColor: "#0D6EFD",
-              backgroundColor: "transparent",
-              fill: false,
-              tension: 0,
-              borderDash: [7, 4],
-              borderWidth: 2,
-              spanGaps: true,
               pointRadius: (ctx) => {
-                // Hanya tampilkan titik di posisi terakhir (titik prediksi)
-                return ctx.dataIndex === incomePredData.length - 1 ? 8 : 0;
+                return ctx.dataIndex === expenseFullData.length - 1 ? 8 : 4;
               },
-              pointStyle: (ctx) => {
-                return ctx.dataIndex === incomePredData.length - 1
-                  ? "star"
-                  : "circle";
+              pointBackgroundColor: (ctx) => {
+                return ctx.dataIndex === expenseFullData.length - 1 ? "#fff" : "#DC3545";
               },
-              pointBackgroundColor: "#fff",
-              pointBorderColor: "#0D6EFD",
+              pointBorderColor: "#DC3545",
               pointBorderWidth: 2,
-            },
-            // ── Garis Prediksi Pengeluaran (putus-putus) ──
-            {
-              label: "Prediksi Pengeluaran (Ungu)",
-              data: expensePredData,
-              borderColor: "#AF52DE",
-              backgroundColor: "transparent",
-              fill: false,
-              tension: 0,
-              borderDash: [7, 4],
-              borderWidth: 2,
-              spanGaps: true,
-              pointRadius: (ctx) => {
-                return ctx.dataIndex === expensePredData.length - 1 ? 8 : 0;
-              },
               pointStyle: (ctx) => {
-                return ctx.dataIndex === expensePredData.length - 1
-                  ? "star"
-                  : "circle";
+                return ctx.dataIndex === expenseFullData.length - 1 ? "star" : "circle";
               },
-              pointBackgroundColor: "#fff",
-              pointBorderColor: "#AF52DE",
-              pointBorderWidth: 2,
+              segment: {
+                borderDash: (ctx) => (ctx.p1DataIndex === expenseFullData.length - 1 ? [7, 4] : undefined),
+              },
             },
           ],
         });
@@ -386,43 +340,10 @@ const Prediksi = () => {
     plugins: {
       legend: {
         position: "top",
-        onClick: (e, legendItem, legend) => {
-          const index = legendItem.datasetIndex;
-          const ci = legend.chart;
-
-          // Sinkronisasi: 0=Pemasukan <-> 2=Prediksi Pemasukan, 1=Pengeluaran <-> 3=Prediksi Pengeluaran
-          let partnerIndex;
-          if (index === 0) partnerIndex = 2;
-          else if (index === 2) partnerIndex = 0;
-          else if (index === 1) partnerIndex = 3;
-          else if (index === 3) partnerIndex = 1;
-
-          if (ci.isDatasetVisible(index)) {
-            ci.hide(index);
-            if (partnerIndex !== undefined) ci.hide(partnerIndex);
-          } else {
-            ci.show(index);
-            if (partnerIndex !== undefined) ci.show(partnerIndex);
-          }
-        },
         labels: {
           usePointStyle: true,
           font: {
             size: isMobile ? 10 : 12,
-          },
-          // Bedakan style legend prediksi vs aktual
-          generateLabels: (chart) => {
-            const datasets = chart.data.datasets;
-            return datasets.map((ds, i) => ({
-              text: ds.label,
-              fillStyle: ds.borderColor,
-              strokeStyle: ds.borderColor,
-              lineWidth: 2,
-              lineDash: ds.borderDash || [],
-              hidden: !chart.isDatasetVisible(i),
-              datasetIndex: i,
-              pointStyle: ds.label.includes("Prediksi") ? "star" : "circle",
-            }));
           },
         },
       },
@@ -440,15 +361,6 @@ const Prediksi = () => {
             const label = items[0].label || "";
             return label.includes("★") ? `${label} (Prediksi)` : label;
           },
-        },
-        filter: (item) => {
-          if (item.raw === null || item.raw === undefined) return false;
-          // Sembunyikan dataset prediksi di titik sambung (bulan terakhir aktual)
-          // supaya tidak duplikat dengan data aktual di tooltip
-          if (item.dataset.label.includes("Prediksi")) {
-            return item.dataIndex === item.dataset.data.length - 1;
-          }
-          return true;
         },
       },
     },
@@ -688,19 +600,19 @@ const Prediksi = () => {
                   style={{ borderRadius: "16px", background: "white" }}
                 >
                   <div
-                    style={{ height: "8px", backgroundColor: "#0D6EFD" }}
+                    style={{ height: "8px", backgroundColor: "#DC3545" }}
                   ></div>
                   <div className="card-body p-4">
                     <div className="d-flex align-items-center mb-4">
                       <div
                         className="p-3 rounded-3 me-3 d-flex align-items-center justify-content-center"
                         style={{
-                          backgroundColor: "#E7F1FF",
-                          color: "#0D6EFD",
-                          border: "1px solid #0D6EFD",
+                          backgroundColor: "#FEF2F2",
+                          color: "#DC3545",
+                          border: "1px solid #DC3545",
                         }}
                       >
-                        <BsLightbulbFill size={24} />
+                        <BsExclamationTriangle size={24} />
                       </div>
                       <h5 className="fw-bold mb-0 text-dark">
                         Prediksi Pengeluaran
@@ -709,8 +621,8 @@ const Prediksi = () => {
                     <div
                       className="p-3 rounded-3"
                       style={{
-                        backgroundColor: "#F0F7FF",
-                        borderLeft: "4px solid #0D6EFD",
+                        backgroundColor: "#FFF5F5",
+                        borderLeft: "4px solid #DC3545",
                       }}
                     >
                       <div className="d-flex align-items-center justify-content-between">
@@ -792,12 +704,12 @@ const Prediksi = () => {
                     <svg width="24" height="10">
                       <line
                         x1="0" y1="5" x2="24" y2="5"
-                        stroke="#0D6EFD"
+                        stroke="#28A745"
                         strokeWidth="2"
                         strokeDasharray="5,3"
                       />
                     </svg>
-                    <span style={{ fontSize: isMobile ? '10px' : 'inherit' }}>= Prediksi Pemasukan</span>
+                    <span style={{ fontSize: isMobile ? '10px' : 'inherit' }}>= Prediksi Pemasukan (Hijau)</span>
                   </span>
                   <span
                     className="small text-muted d-flex align-items-center gap-1"
@@ -805,12 +717,12 @@ const Prediksi = () => {
                     <svg width="24" height="10">
                       <line
                         x1="0" y1="5" x2="24" y2="5"
-                        stroke="#AF52DE"
+                        stroke="#DC3545"
                         strokeWidth="2"
                         strokeDasharray="5,3"
                       />
                     </svg>
-                    <span style={{ fontSize: isMobile ? '10px' : 'inherit' }}>= Prediksi Pengeluaran</span>
+                    <span style={{ fontSize: isMobile ? '10px' : 'inherit' }}>= Prediksi Pengeluaran (Merah)</span>
                   </span>
                   <span className="small text-muted" style={{ fontSize: isMobile ? '10px' : 'inherit' }}>★ = Titik prediksi</span>
                 </div>

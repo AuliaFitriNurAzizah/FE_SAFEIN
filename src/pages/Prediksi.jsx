@@ -174,10 +174,27 @@ const Prediksi = () => {
         const forecastData =
           forecastRes?.data?.data || forecastRes?.data || {};
 
-        const predIncome = Number(forecastData?.pred_income) || 0;
-        const predExpense = Number(forecastData?.pred_expense) || 0;
+        // =========================
+        // PERSONALIZED FALLBACK
+        // =========================
+        // Hitung rata-rata histori user sebagai prediksi cadangan jika AI tidak mengembalikan nilai
+        const avgIncome = monthlyArray.length > 0
+          ? monthlyArray.reduce((sum, item) => sum + item.income, 0) / monthlyArray.length
+          : 0;
+        const avgExpense = monthlyArray.length > 0
+          ? monthlyArray.reduce((sum, item) => sum + item.expense, 0) / monthlyArray.length
+          : 0;
 
-        const forecastRecommendation = (
+        // Gunakan nilai AI jika ada (> 0), jika tidak gunakan rata-rata histori (disesuaikan per user)
+        const predIncome = Number(forecastData?.pred_income) > 0 
+          ? Number(forecastData?.pred_income) 
+          : Math.round(avgIncome);
+          
+        const predExpense = Number(forecastData?.pred_expense) > 0 
+          ? Number(forecastData?.pred_expense) 
+          : Math.round(avgExpense);
+
+        let forecastRecommendation = (
           forecastData?.recommendation ||
           forecastData?.rekomendasi ||
           forecastData?.insight ||
@@ -190,7 +207,21 @@ const Prediksi = () => {
           ""
         )
           ?.toString()
-          ?.trim() || "Belum ada rekomendasi AI";
+          ?.trim();
+
+        // Jika rekomendasi AI kosong, buat rekomendasi personal berdasarkan data user
+        if (!forecastRecommendation || forecastRecommendation === "Belum ada rekomendasi AI") {
+          const ratio = avgIncome > 0 ? (avgExpense / avgIncome) * 100 : 0;
+          if (ratio > 90) {
+            forecastRecommendation = `Halo ${infoUser?.name || "User"}, pengeluaran Anda hampir mencapai 100% dari pemasukan. Kami sarankan untuk mengurangi pengeluaran non-prioritas bulan depan.`;
+          } else if (ratio > 70) {
+            forecastRecommendation = `Halo ${infoUser?.name || "User"}, pengeluaran Anda cukup tinggi (sekitar ${Math.round(ratio)}%). Cobalah untuk lebih hemat agar tabungan Anda bisa meningkat.`;
+          } else if (avgIncome > 0) {
+            forecastRecommendation = `Halo ${infoUser?.name || "User"}, kondisi keuangan Anda terlihat sehat. Pertahankan rasio pengeluaran saat ini untuk tabungan masa depan.`;
+          } else {
+            forecastRecommendation = "Silahkan terus catat transaksi Anda untuk mendapatkan analisis yang lebih mendalam.";
+          }
+        }
 
         // =========================
         // PREDICTION DATA
